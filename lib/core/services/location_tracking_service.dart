@@ -60,13 +60,15 @@ class LocationTrackingService {
 
   Future<void> start() async {
     if (!isSupported) {
-      throw UnsupportedError(
+      throw const LocationTrackingException(
         'Background tuition location tracking is currently supported on Android.',
       );
     }
 
     if (!await Geolocator.isLocationServiceEnabled()) {
-      throw StateError('Location services are turned off on this device.');
+      throw const LocationTrackingException(
+        'Location services are turned off on this device.',
+      );
     }
 
     var permission = await Geolocator.checkPermission();
@@ -74,20 +76,18 @@ class LocationTrackingService {
       permission = await Geolocator.requestPermission();
     }
     if (permission != LocationPermission.always) {
-      if (permission == LocationPermission.deniedForever) {
-        await Geolocator.openAppSettings();
-      }
-      throw StateError(
+      await Geolocator.openAppSettings();
+      throw const LocationTrackingException(
         'Allow location access all the time to track tuition in the background.',
       );
     }
 
     final notifications = LocalNotificationService();
     await notifications.initialize();
-    final notificationPermissionGranted =
-        await notifications.requestPermission();
+    final notificationPermissionGranted = await notifications
+        .requestPermission();
     if (!notificationPermissionGranted) {
-      throw StateError(
+      throw const LocationTrackingException(
         'Allow notifications so arrival and completed-day alerts can be shown.',
       );
     }
@@ -110,17 +110,30 @@ class LocationTrackingService {
       ),
     );
     if (!configured) {
-      throw StateError('The location service could not be configured.');
+      throw const LocationTrackingException(
+        'The location service could not be configured.',
+      );
     }
     final started = await _service.startService();
     if (!started) {
-      throw StateError('The background location service did not start.');
+      throw const LocationTrackingException(
+        'The background location service did not start.',
+      );
     }
   }
 
   Future<void> stop() async {
     if (isSupported) _service.invoke('stopTracking');
   }
+}
+
+class LocationTrackingException implements Exception {
+  const LocationTrackingException(this.message);
+
+  final String message;
+
+  @override
+  String toString() => message;
 }
 
 @pragma('vm:entry-point')
@@ -133,7 +146,7 @@ void locationServiceEntrypoint(ServiceInstance service) async {
   final notifications = LocalNotificationService();
   await notifications.initialize();
   final preferences = await SharedPreferences.getInstance();
-  final languageCode = preferences.getString('language') ?? 'en';
+  final fallbackLanguageCode = preferences.getString('language') ?? 'en';
   Timer? nextPoll;
   var isPolling = false;
   var nextInterval = LocationPollingTier.far.interval;
@@ -201,9 +214,8 @@ void locationServiceEntrypoint(ServiceInstance service) async {
       }
 
       final nearest = students.reduce(
-        (left, right) => distances[left.id]! <= distances[right.id]!
-            ? left
-            : right,
+        (left, right) =>
+            distances[left.id]! <= distances[right.id]! ? left : right,
       );
       final nearestDistance = distances[nearest.id]!;
       await preferences.setDouble('last_location_distance', nearestDistance);
@@ -217,11 +229,18 @@ void locationServiceEntrypoint(ServiceInstance service) async {
 
       final processIds = <String>{
         ...activeStudentIds,
-        if (nearestDistance <= nearest.geofenceRadiusMeters) nearest.id,
+        ...students
+            .where(
+              (student) =>
+                  distances[student.id]! <= student.geofenceRadiusMeters,
+            )
+            .map((student) => student.id),
       };
       for (final student in students.where(
         (item) => processIds.contains(item.id),
       )) {
+        final languageCode =
+            preferences.getString('language') ?? fallbackLanguageCode;
         final distance = distances[student.id]!;
         final result = await repository.processLocationFix(
           student: student,
@@ -263,8 +282,8 @@ void locationServiceEntrypoint(ServiceInstance service) async {
         if (result.sessionEnded) {
           await notifications.showSessionEnded(
             studentName: student.name,
-            completed: result.activeSeconds >=
-                student.tuitionDayThresholdMinutes * 60,
+            completed:
+                result.activeSeconds >= student.tuitionDayThresholdMinutes * 60,
             languageCode: languageCode,
           );
         }

@@ -17,21 +17,20 @@ class StudentRepository {
   }
 
   Future<List<Student>> getActiveStudentsWithLocations() {
-    return (_database.select(_database.students)
-          ..where(
-            (student) =>
-                student.active &
-                student.deletedAt.isNull() &
-                student.latitude.isNotNull() &
-                student.longitude.isNotNull(),
-          ))
+    return (_database.select(_database.students)..where(
+          (student) =>
+              student.active &
+              student.deletedAt.isNull() &
+              student.latitude.isNotNull() &
+              student.longitude.isNotNull(),
+        ))
         .get();
   }
 
   Future<Student?> getStudentById(String id) {
-    return (_database.select(_database.students)
-          ..where((student) => student.id.equals(id)))
-        .getSingleOrNull();
+    return (_database.select(
+      _database.students,
+    )..where((student) => student.id.equals(id))).getSingleOrNull();
   }
 
   Future<void> addStudent({
@@ -48,24 +47,28 @@ class StudentRepository {
     String? notes,
   }) async {
     final now = DateTime.now().toUtc();
-    await _database.into(_database.students).insert(
-      StudentsCompanion.insert(
-        id: _uuid.v4(),
-        name: name.trim(),
-        phone: Value(_optionalText(phone)),
-        address: Value(_optionalText(address)),
-        latitude: Value(latitude),
-        longitude: Value(longitude),
-        geofenceRadiusMeters: Value(geofenceRadiusMeters),
-        sessionDurationMinutes: Value(sessionDurationMinutes),
-        tuitionDayThresholdMinutes: Value(tuitionDayThresholdMinutes),
-        paymentRate: Value(paymentRate),
-        completedDaysTarget: Value(completedDaysTarget),
-        notes: Value(_optionalText(notes)),
-        createdAt: Value(now),
-        updatedAt: Value(now),
-      ),
-    );
+    final id = _uuid.v4();
+    await _database
+        .into(_database.students)
+        .insert(
+          StudentsCompanion.insert(
+            id: id,
+            name: name.trim(),
+            phone: Value(_optionalText(phone)),
+            address: Value(_optionalText(address)),
+            latitude: Value(latitude),
+            longitude: Value(longitude),
+            geofenceRadiusMeters: Value(geofenceRadiusMeters),
+            sessionDurationMinutes: Value(sessionDurationMinutes),
+            tuitionDayThresholdMinutes: Value(tuitionDayThresholdMinutes),
+            paymentRate: Value(paymentRate),
+            completedDaysTarget: Value(completedDaysTarget),
+            notes: Value(_optionalText(notes)),
+            createdAt: Value(now),
+            updatedAt: Value(now),
+          ),
+        );
+    await _enqueue('student', id);
   }
 
   Future<void> updateStudent({
@@ -83,9 +86,10 @@ class StudentRepository {
     String? notes,
   }) async {
     final now = DateTime.now().toUtc();
-    final changed = await (_database.update(_database.students)
-          ..where((student) => student.id.equals(id)))
-        .write(
+    final changed =
+        await (_database.update(
+          _database.students,
+        )..where((student) => student.id.equals(id))).write(
           StudentsCompanion(
             name: Value(name.trim()),
             phone: Value(_optionalText(phone)),
@@ -104,19 +108,21 @@ class StudentRepository {
     if (changed != 1) {
       throw StateError('Student $id was not found while updating.');
     }
+    await _enqueue('student', id);
   }
 
   Future<void> archiveStudent(String id) async {
     final now = DateTime.now().toUtc();
-    await (_database.update(_database.students)
-          ..where((student) => student.id.equals(id)))
-        .write(
-          StudentsCompanion(
-            active: const Value(false),
-            deletedAt: Value(now),
-            updatedAt: Value(now),
-          ),
-        );
+    await (_database.update(
+      _database.students,
+    )..where((student) => student.id.equals(id))).write(
+      StudentsCompanion(
+        active: const Value(false),
+        deletedAt: Value(now),
+        updatedAt: Value(now),
+      ),
+    );
+    await _enqueue('student', id);
   }
 
   Future<List<Schedule>> getSchedules(String studentId) {
@@ -170,47 +176,49 @@ class StudentRepository {
           await _softDeleteSchedule(entry.value.id, now);
           continue;
         }
-        await (_database.update(_database.schedules)
-              ..where((schedule) => schedule.id.equals(entry.value.id)))
-            .write(
-              SchedulesCompanion(
-                startTime: Value(newTime),
-                expectedDurationMinutes: Value(expectedDurationMinutes),
-                updatedAt: Value(now),
-              ),
-            );
+        await (_database.update(
+          _database.schedules,
+        )..where((schedule) => schedule.id.equals(entry.value.id))).write(
+          SchedulesCompanion(
+            startTime: Value(newTime),
+            expectedDurationMinutes: Value(expectedDurationMinutes),
+            updatedAt: Value(now),
+          ),
+        );
         await _enqueue('schedule', entry.value.id);
       }
 
       for (final entry in dayToStartTime.entries) {
         if (existingByDay.containsKey(entry.key)) continue;
         final id = _uuid.v4();
-        await _database.into(_database.schedules).insert(
-          SchedulesCompanion.insert(
-            id: id,
-            studentId: studentId,
-            dayOfWeek: entry.key,
-            startTime: entry.value,
-            expectedDurationMinutes: expectedDurationMinutes,
-            createdAt: Value(now),
-            updatedAt: Value(now),
-          ),
-        );
+        await _database
+            .into(_database.schedules)
+            .insert(
+              SchedulesCompanion.insert(
+                id: id,
+                studentId: studentId,
+                dayOfWeek: entry.key,
+                startTime: entry.value,
+                expectedDurationMinutes: expectedDurationMinutes,
+                createdAt: Value(now),
+                updatedAt: Value(now),
+              ),
+            );
         await _enqueue('schedule', id);
       }
     });
   }
 
   Future<void> _softDeleteSchedule(String id, DateTime updatedAt) async {
-    await (_database.update(_database.schedules)
-          ..where((schedule) => schedule.id.equals(id)))
-        .write(
-          SchedulesCompanion(
-            active: const Value(false),
-            deletedAt: Value(updatedAt),
-            updatedAt: Value(updatedAt),
-          ),
-        );
+    await (_database.update(
+      _database.schedules,
+    )..where((schedule) => schedule.id.equals(id))).write(
+      SchedulesCompanion(
+        active: const Value(false),
+        deletedAt: Value(updatedAt),
+        updatedAt: Value(updatedAt),
+      ),
+    );
     await _enqueue('schedule', id);
   }
 
@@ -229,11 +237,9 @@ class StudentRepository {
   }
 
   Future<List<Session>> getActiveSessions() {
-    return (_database.select(_database.sessions)
-          ..where(
-            (session) =>
-                session.endedAt.isNull() & session.deletedAt.isNull(),
-          ))
+    return (_database.select(_database.sessions)..where(
+          (session) => session.endedAt.isNull() & session.deletedAt.isNull(),
+        ))
         .get();
   }
 
@@ -243,9 +249,7 @@ class StudentRepository {
     required double longitude,
     required DateTime detectedAt,
   }) async {
-    final cooldownStart = detectedAt.toUtc().subtract(
-      const Duration(hours: 6),
-    );
+    final cooldownStart = detectedAt.toUtc().subtract(const Duration(hours: 6));
     final recentPrompt =
         await (_database.select(_database.arrivalPrompts)
               ..where(
@@ -258,19 +262,21 @@ class StudentRepository {
     if (recentPrompt != null) return null;
 
     final id = _uuid.v4();
-    await _database.into(_database.arrivalPrompts).insert(
-      ArrivalPromptsCompanion.insert(
-        id: id,
-        studentId: studentId,
-        latitude: latitude,
-        longitude: longitude,
-        detectedAt: detectedAt.toUtc(),
-      ),
-    );
+    await _database
+        .into(_database.arrivalPrompts)
+        .insert(
+          ArrivalPromptsCompanion.insert(
+            id: id,
+            studentId: studentId,
+            latitude: latitude,
+            longitude: longitude,
+            detectedAt: detectedAt.toUtc(),
+          ),
+        );
     await _enqueue('arrival_prompt', id);
-    return (_database.select(_database.arrivalPrompts)
-          ..where((prompt) => prompt.id.equals(id)))
-        .getSingle();
+    return (_database.select(
+      _database.arrivalPrompts,
+    )..where((prompt) => prompt.id.equals(id))).getSingle();
   }
 
   Future<String> acceptArrivalPrompt(String promptId) {
@@ -305,28 +311,31 @@ class StudentRepository {
 
       final now = DateTime.now().toUtc();
       final sessionId = _uuid.v4();
-      await _database.into(_database.sessions).insert(
-        SessionsCompanion.insert(
-          id: sessionId,
-          studentId: student.id,
-          startedAt: now,
-          requiredDurationSeconds: student.tuitionDayThresholdMinutes * 60,
-          source: const Value('automatic'),
-          startLatitude: Value(prompt.latitude),
-          startLongitude: Value(prompt.longitude),
-          lastInsideAt: Value(now),
-          createdAt: Value(now),
-          updatedAt: Value(now),
-        ),
-      );
-      await (_database.update(_database.arrivalPrompts)
-            ..where((item) => item.id.equals(promptId)))
-          .write(
-            ArrivalPromptsCompanion(
-              status: const Value('accepted'),
-              decidedAt: Value(now),
+      await _database
+          .into(_database.sessions)
+          .insert(
+            SessionsCompanion.insert(
+              id: sessionId,
+              studentId: student.id,
+              startedAt: now,
+              requiredDurationSeconds: student.tuitionDayThresholdMinutes * 60,
+              source: const Value('automatic'),
+              startLatitude: Value(prompt.latitude),
+              startLongitude: Value(prompt.longitude),
+              lastInsideAt: Value(now),
+              createdAt: Value(now),
+              updatedAt: Value(now),
             ),
           );
+      await (_database.update(
+        _database.arrivalPrompts,
+      )..where((item) => item.id.equals(promptId))).write(
+        ArrivalPromptsCompanion(
+          status: const Value('accepted'),
+          decidedAt: Value(now),
+        ),
+      );
+      await _enqueue('arrival_prompt', promptId);
       await _enqueue('session', sessionId);
       return sessionId;
     });
@@ -334,16 +343,17 @@ class StudentRepository {
 
   Future<void> declineArrivalPrompt(String promptId) async {
     final now = DateTime.now().toUtc();
-    await (_database.update(_database.arrivalPrompts)
-          ..where(
-            (prompt) => prompt.id.equals(promptId) & prompt.status.equals('pending'),
-          ))
+    await (_database.update(_database.arrivalPrompts)..where(
+          (prompt) =>
+              prompt.id.equals(promptId) & prompt.status.equals('pending'),
+        ))
         .write(
           ArrivalPromptsCompanion(
             status: const Value('declined'),
             decidedAt: Value(now),
           ),
         );
+    await _enqueue('arrival_prompt', promptId);
   }
 
   Future<PositionProcessingResult> processLocationFix({
@@ -382,16 +392,13 @@ class StudentRepository {
           detectedAt: at,
         );
         if (prompt != null) {
-          await _database.into(_database.locationLogs).insert(
-            LocationLogsCompanion.insert(
-              id: _uuid.v4(),
-              studentId: student.id,
-              latitude: latitude,
-              longitude: longitude,
-              accuracyMeters: accuracyMeters,
-              distanceMeters: distanceMeters,
-              recordedAt: at,
-            ),
+          await _recordLocationLog(
+            studentId: student.id,
+            latitude: latitude,
+            longitude: longitude,
+            accuracyMeters: accuracyMeters,
+            distanceMeters: distanceMeters,
+            recordedAt: at,
           );
         }
         return PositionProcessingResult(arrivalPrompt: prompt);
@@ -405,13 +412,14 @@ class StudentRepository {
 
       if (withinRadius) {
         final elapsed = at.difference(lastInsideAt).inSeconds;
-        if (elapsed > 0 && elapsed <= 10 * 60) {
+        if (outsideSinceAt == null && elapsed > 0 && elapsed <= 10 * 60) {
           activeSeconds += elapsed;
         }
         lastInsideAt = at;
         outsideSinceAt = null;
         completedNow =
-            !session.completed && activeSeconds >= session.requiredDurationSeconds;
+            !session.completed &&
+            activeSeconds >= session.requiredDurationSeconds;
       } else {
         outsideSinceAt ??= at;
         if (at.difference(outsideSinceAt) >= exitGracePeriod) {
@@ -423,13 +431,15 @@ class StudentRepository {
           }
           endedNow = true;
           completedNow =
-              !session.completed && activeSeconds >= session.requiredDurationSeconds;
+              !session.completed &&
+              activeSeconds >= session.requiredDurationSeconds;
         }
       }
 
-      final updated = await (_database.update(_database.sessions)
-            ..where((row) => row.id.equals(session.id)))
-          .write(
+      final updated =
+          await (_database.update(
+            _database.sessions,
+          )..where((row) => row.id.equals(session.id))).write(
             SessionsCompanion(
               activeSeconds: Value(activeSeconds),
               lastInsideAt: Value(lastInsideAt),
@@ -448,17 +458,14 @@ class StudentRepository {
         throw StateError('Active session ${session.id} could not be updated.');
       }
 
-      await _database.into(_database.locationLogs).insert(
-        LocationLogsCompanion.insert(
-          id: _uuid.v4(),
-          studentId: student.id,
-          sessionId: Value(session.id),
-          latitude: latitude,
-          longitude: longitude,
-          accuracyMeters: accuracyMeters,
-          distanceMeters: distanceMeters,
-          recordedAt: at,
-        ),
+      await _recordLocationLog(
+        studentId: student.id,
+        sessionId: session.id,
+        latitude: latitude,
+        longitude: longitude,
+        accuracyMeters: accuracyMeters,
+        distanceMeters: distanceMeters,
+        recordedAt: at,
       );
 
       if (completedNow || endedNow) await _enqueue('session', session.id);
@@ -480,44 +487,68 @@ class StudentRepository {
                     payment.status.equals('paid') &
                     payment.paymentDate.isNotNull(),
               )
-              ..orderBy([
-                (payment) => OrderingTerm.desc(payment.paymentDate),
-              ])
+              ..orderBy([(payment) => OrderingTerm.desc(payment.paymentDate)])
               ..limit(1))
             .getSingleOrNull();
     final sessions =
-        await (_database.select(_database.sessions)
-              ..where(
-                (session) =>
-                    session.studentId.equals(studentId) &
-                    session.completed &
-                    session.deletedAt.isNull() &
-                    (lastPayment == null
-                        ? const Constant(true)
-                        : session.startedAt.isBiggerThanValue(
-                            lastPayment.paymentDate!,
-                          )),
-              ))
+        await (_database.select(_database.sessions)..where(
+              (session) =>
+                  session.studentId.equals(studentId) &
+                  session.completed &
+                  session.deletedAt.isNull() &
+                  (lastPayment == null
+                      ? const Constant(true)
+                      : session.startedAt.isBiggerThanValue(
+                          lastPayment.paymentDate!,
+                        )),
+            ))
             .get();
-    final localDates = sessions
-        .map((session) {
-          final local = session.startedAt.toLocal();
-          return '${local.year}-${local.month}-${local.day}';
-        })
-        .toSet();
+    final localDates = sessions.map((session) {
+      final local = session.startedAt.toLocal();
+      return '${local.year}-${local.month}-${local.day}';
+    }).toSet();
     return localDates.length;
   }
 
   Future<void> _enqueue(String entityType, String entityId) async {
-    await _database.into(_database.syncQueue).insertOnConflictUpdate(
-      SyncQueueCompanion.insert(
-        id: '$entityType:$entityId',
-        entityType: entityType,
-        entityId: entityId,
-        operation: 'upsert',
-        updatedAt: Value(DateTime.now().toUtc()),
-      ),
-    );
+    await _database
+        .into(_database.syncQueue)
+        .insertOnConflictUpdate(
+          SyncQueueCompanion.insert(
+            id: '$entityType:$entityId',
+            entityType: entityType,
+            entityId: entityId,
+            operation: 'upsert',
+            updatedAt: Value(DateTime.now().toUtc()),
+          ),
+        );
+  }
+
+  Future<void> _recordLocationLog({
+    required String studentId,
+    String? sessionId,
+    required double latitude,
+    required double longitude,
+    required double accuracyMeters,
+    required double distanceMeters,
+    required DateTime recordedAt,
+  }) async {
+    final id = _uuid.v4();
+    await _database
+        .into(_database.locationLogs)
+        .insert(
+          LocationLogsCompanion.insert(
+            id: id,
+            studentId: studentId,
+            sessionId: Value(sessionId),
+            latitude: latitude,
+            longitude: longitude,
+            accuracyMeters: accuracyMeters,
+            distanceMeters: distanceMeters,
+            recordedAt: recordedAt,
+          ),
+        );
+    await _enqueue('location_log', id);
   }
 
   double _acceptableAccuracy(int radius) =>

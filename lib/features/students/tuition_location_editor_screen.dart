@@ -227,15 +227,8 @@ class _TuitionLocationEditorScreenState
         final message = error is LocationSelectionException
             ? error.message
             : strings.locationReadFailed;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message)),
-        );
-      }
-
-      class LocationSelectionException implements Exception {
-        const LocationSelectionException(this.message);
-
-        final String message;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(message)));
       }
     } finally {
       if (mounted) setState(() => _gettingLocation = false);
@@ -246,32 +239,38 @@ class _TuitionLocationEditorScreenState
     if (!_formKey.currentState!.validate()) return;
     setState(() => _saving = true);
     try {
-      await ref.read(studentRepositoryProvider).updateStudent(
-        id: widget.student.id,
-        name: widget.student.name,
-        phone: widget.student.phone,
-        address: widget.student.address,
-        latitude: double.parse(_latitudeController.text.trim()),
-        longitude: double.parse(_longitudeController.text.trim()),
-        geofenceRadiusMeters: _radiusMeters,
-        sessionDurationMinutes: widget.student.sessionDurationMinutes,
-        tuitionDayThresholdMinutes: int.parse(_thresholdController.text),
-        paymentRate: widget.student.paymentRate,
-        completedDaysTarget: int.parse(_targetDaysController.text),
-        notes: widget.student.notes,
-      );
+      await ref
+          .read(studentRepositoryProvider)
+          .updateStudent(
+            id: widget.student.id,
+            name: widget.student.name,
+            phone: widget.student.phone,
+            address: widget.student.address,
+            latitude: double.parse(_latitudeController.text.trim()),
+            longitude: double.parse(_longitudeController.text.trim()),
+            geofenceRadiusMeters: _radiusMeters,
+            sessionDurationMinutes: widget.student.sessionDurationMinutes,
+            tuitionDayThresholdMinutes: int.parse(_thresholdController.text),
+            paymentRate: widget.student.paymentRate,
+            completedDaysTarget: int.parse(_targetDaysController.text),
+            notes: widget.student.notes,
+          );
       if (mounted) Navigator.of(context).pop(true);
     } on Exception catch (error) {
       debugPrint('Unable to save tuition location: $error');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.unknownError),
-          ),
+          SnackBar(content: Text(AppLocalizations.of(context)!.unknownError)),
         );
       }
     } finally {
       if (mounted) setState(() => _saving = false);
     }
   }
+}
+
+class LocationSelectionException implements Exception {
+  const LocationSelectionException(this.message);
+
+  final String message;
 }
