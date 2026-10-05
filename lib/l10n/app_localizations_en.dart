@@ -170,6 +170,106 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meterShort => 'm';
 
   @override
+  String get editTuitionLocation => 'Edit tuition location';
+
+  @override
+  String get useCurrentLocation => 'Use current location';
+
+  @override
+  String get paymentTargetDays => 'Completed days before payment reminder';
+
+  @override
+  String get daysUnit => 'days';
+
+  @override
+  String get locationBackgroundNote =>
+      'Background tracking needs Location access set to Allow all the time and notifications enabled. GPS works without internet; Android may delay updates to save battery.';
+
+  @override
+  String get locationServicesDisabled =>
+      'Turn on Location services and try again.';
+
+  @override
+  String get locationPermissionDenied =>
+      'Location permission was denied. Allow location access in Settings.';
+
+  @override
+  String get locationReadFailed => 'Could not read your current location.';
+
+  @override
+  String get locationTracking => 'Location tracking';
+
+  @override
+  String get startLocationTracking => 'Enable background tracking';
+
+  @override
+  String get stopLocationTracking => 'Stop background tracking';
+
+  @override
+  String get locationTrackingOn => 'Location monitoring is active.';
+
+  @override
+  String get locationTrackingOff => 'Location monitoring is stopped.';
+
+  @override
+  String get trackingAndroidOnly =>
+      'Background tracking is currently available on Android only.';
+
+  @override
+  String get trackingPermissionNote =>
+      'Keep tracking enabled to receive arrival prompts. Android requires persistent location and notification permissions.';
+
+  @override
+  String get locationTrackingStartFailed =>
+      'Could not start background tracking. Check location and notification permissions.';
+
+  @override
+  String get locationTrackingStopFailed =>
+      'Could not stop background tracking. Try again.';
+
+  @override
+  String get weeklySchedule => 'Weekly schedule';
+
+  @override
+  String get editWeeklySchedule => 'Edit weekly schedule';
+
+  @override
+  String get scheduleSaved => 'Weekly schedule saved';
+
+  @override
+  String get noSchedule => 'No weekly schedule added';
+
+  @override
+  String get sunday => 'Sunday';
+
+  @override
+  String get monday => 'Monday';
+
+  @override
+  String get tuesday => 'Tuesday';
+
+  @override
+  String get wednesday => 'Wednesday';
+
+  @override
+  String get thursday => 'Thursday';
+
+  @override
+  String get friday => 'Friday';
+
+  @override
+  String get saturday => 'Saturday';
+
+  @override
+  String get chooseTime => 'Choose time';
+
+  @override
+  String get saveSchedule => 'Save schedule';
+
+  @override
+  String get scheduleSaveFailed => 'Could not save the weekly schedule.';
+
+  @override
   String get dashboardSubtitle => 'Your tuition at a glance';
 
   @override

@@ -171,6 +171,106 @@ class AppLocalizationsBn extends AppLocalizations {
   String get meterShort => 'মি';
 
   @override
+  String get editTuitionLocation => 'টিউশনের অবস্থান সম্পাদনা';
+
+  @override
+  String get useCurrentLocation => 'বর্তমান অবস্থান ব্যবহার করুন';
+
+  @override
+  String get paymentTargetDays => 'পেমেন্ট বিজ্ঞপ্তির আগে সম্পন্ন দিন';
+
+  @override
+  String get daysUnit => 'দিন';
+
+  @override
+  String get locationBackgroundNote =>
+      'ব্যাকগ্রাউন্ড ট্র্যাকিংয়ের জন্য লোকেশন অনুমতি \'সব সময় অনুমতি দিন\' এবং বিজ্ঞপ্তি চালু রাখুন। জিপিএস ইন্টারনেট ছাড়াই কাজ করে; ব্যাটারি বাঁচাতে অ্যান্ড্রয়েড আপডেট দেরি করাতে পারে।';
+
+  @override
+  String get locationServicesDisabled =>
+      'লোকেশন সেবা চালু করে আবার চেষ্টা করুন।';
+
+  @override
+  String get locationPermissionDenied =>
+      'লোকেশন অনুমতি দেওয়া হয়নি। সেটিংসে লোকেশন অনুমতি দিন।';
+
+  @override
+  String get locationReadFailed => 'বর্তমান অবস্থান পড়া যায়নি।';
+
+  @override
+  String get locationTracking => 'লোকেশন ট্র্যাকিং';
+
+  @override
+  String get startLocationTracking => 'ব্যাকগ্রাউন্ড ট্র্যাকিং চালু করুন';
+
+  @override
+  String get stopLocationTracking => 'ব্যাকগ্রাউন্ড ট্র্যাকিং বন্ধ করুন';
+
+  @override
+  String get locationTrackingOn => 'লোকেশন পর্যবেক্ষণ চালু আছে।';
+
+  @override
+  String get locationTrackingOff => 'লোকেশন পর্যবেক্ষণ বন্ধ আছে।';
+
+  @override
+  String get trackingAndroidOnly =>
+      'ব্যাকগ্রাউন্ড ট্র্যাকিং বর্তমানে শুধু অ্যান্ড্রয়েডে উপলভ্য।';
+
+  @override
+  String get trackingPermissionNote =>
+      'অবস্থান বিজ্ঞপ্তি পেতে ট্র্যাকিং চালু রাখুন। অ্যান্ড্রয়েডে লোকেশন ও বিজ্ঞপ্তির স্থায়ী অনুমতি প্রয়োজন।';
+
+  @override
+  String get locationTrackingStartFailed =>
+      'ব্যাকগ্রাউন্ড ট্র্যাকিং শুরু হয়নি। লোকেশন ও বিজ্ঞপ্তির অনুমতি যাচাই করুন।';
+
+  @override
+  String get locationTrackingStopFailed =>
+      'ব্যাকগ্রাউন্ড ট্র্যাকিং বন্ধ করা যায়নি। আবার চেষ্টা করুন।';
+
+  @override
+  String get weeklySchedule => 'সাপ্তাহিক সময়সূচি';
+
+  @override
+  String get editWeeklySchedule => 'সাপ্তাহিক সময়সূচি সম্পাদনা';
+
+  @override
+  String get scheduleSaved => 'সাপ্তাহিক সময়সূচি সংরক্ষিত হয়েছে';
+
+  @override
+  String get noSchedule => 'কোনো সাপ্তাহিক সময়সূচি যোগ করা হয়নি';
+
+  @override
+  String get sunday => 'রবিবার';
+
+  @override
+  String get monday => 'সোমবার';
+
+  @override
+  String get tuesday => 'মঙ্গলবার';
+
+  @override
+  String get wednesday => 'বুধবার';
+
+  @override
+  String get thursday => 'বৃহস্পতিবার';
+
+  @override
+  String get friday => 'শুক্রবার';
+
+  @override
+  String get saturday => 'শনিবার';
+
+  @override
+  String get chooseTime => 'সময় নির্বাচন করুন';
+
+  @override
+  String get saveSchedule => 'সময়সূচি সংরক্ষণ করুন';
+
+  @override
+  String get scheduleSaveFailed => 'সাপ্তাহিক সময়সূচি সংরক্ষণ করা যায়নি।';
+
+  @override
   String get dashboardSubtitle => 'আপনার টিউশনের সংক্ষিপ্ত বিবরণ';
 
   @override

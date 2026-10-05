@@ -1,9 +1,13 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/settings/app_settings.dart';
+import 'core/services/local_notification_service.dart';
 import 'core/theme/app_theme.dart';
 import 'data/local/database/app_database.dart';
 import 'data/local/database/database_provider.dart';
@@ -15,6 +19,9 @@ import 'l10n/app_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+    await LocalNotificationService().initialize();
+  }
   final preferences = await SharedPreferences.getInstance();
   final database = AppDatabase();
 

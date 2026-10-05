@@ -20,6 +20,7 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
   final _longitudeController = TextEditingController();
   final _durationController = TextEditingController(text: '120');
   final _thresholdController = TextEditingController(text: '120');
+  final _targetDaysController = TextEditingController(text: '12');
   final _paymentRateController = TextEditingController(text: '0');
   final _notesController = TextEditingController();
 
@@ -35,6 +36,7 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
     _longitudeController.dispose();
     _durationController.dispose();
     _thresholdController.dispose();
+    _targetDaysController.dispose();
     _paymentRateController.dispose();
     _notesController.dispose();
     super.dispose();
@@ -183,6 +185,17 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
                   _validateInteger(value, strings: strings, minimum: 1),
             ),
             const SizedBox(height: 24),
+            TextFormField(
+              controller: _targetDaysController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: strings.paymentTargetDays,
+                suffixText: strings.daysUnit,
+              ),
+              validator: (value) =>
+                  _validateInteger(value, strings: strings, minimum: 1),
+            ),
+            const SizedBox(height: 24),
             _sectionTitle(context, strings.ratePerDay),
             const SizedBox(height: 12),
             TextFormField(
@@ -272,6 +285,7 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
             geofenceRadiusMeters: _radiusMeters,
             sessionDurationMinutes: int.parse(_durationController.text),
             tuitionDayThresholdMinutes: int.parse(_thresholdController.text),
+            completedDaysTarget: int.parse(_targetDaysController.text),
             paymentRate: int.parse(_paymentRateController.text),
             notes: _notesController.text,
           );

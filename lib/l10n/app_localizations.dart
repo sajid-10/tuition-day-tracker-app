@@ -392,6 +392,192 @@ abstract class AppLocalizations {
   /// **'m'**
   String get meterShort;
 
+  /// No description provided for @editTuitionLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit tuition location'**
+  String get editTuitionLocation;
+
+  /// No description provided for @useCurrentLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Use current location'**
+  String get useCurrentLocation;
+
+  /// No description provided for @paymentTargetDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed days before payment reminder'**
+  String get paymentTargetDays;
+
+  /// No description provided for @daysUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get daysUnit;
+
+  /// No description provided for @locationBackgroundNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Background tracking needs Location access set to Allow all the time and notifications enabled. GPS works without internet; Android may delay updates to save battery.'**
+  String get locationBackgroundNote;
+
+  /// No description provided for @locationServicesDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on Location services and try again.'**
+  String get locationServicesDisabled;
+
+  /// No description provided for @locationPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission was denied. Allow location access in Settings.'**
+  String get locationPermissionDenied;
+
+  /// No description provided for @locationReadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read your current location.'**
+  String get locationReadFailed;
+
+  /// No description provided for @locationTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Location tracking'**
+  String get locationTracking;
+
+  /// No description provided for @startLocationTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable background tracking'**
+  String get startLocationTracking;
+
+  /// No description provided for @stopLocationTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop background tracking'**
+  String get stopLocationTracking;
+
+  /// No description provided for @locationTrackingOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Location monitoring is active.'**
+  String get locationTrackingOn;
+
+  /// No description provided for @locationTrackingOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Location monitoring is stopped.'**
+  String get locationTrackingOff;
+
+  /// No description provided for @trackingAndroidOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Background tracking is currently available on Android only.'**
+  String get trackingAndroidOnly;
+
+  /// No description provided for @trackingPermissionNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep tracking enabled to receive arrival prompts. Android requires persistent location and notification permissions.'**
+  String get trackingPermissionNote;
+
+  /// No description provided for @locationTrackingStartFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not start background tracking. Check location and notification permissions.'**
+  String get locationTrackingStartFailed;
+
+  /// No description provided for @locationTrackingStopFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not stop background tracking. Try again.'**
+  String get locationTrackingStopFailed;
+
+  /// No description provided for @weeklySchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly schedule'**
+  String get weeklySchedule;
+
+  /// No description provided for @editWeeklySchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit weekly schedule'**
+  String get editWeeklySchedule;
+
+  /// No description provided for @scheduleSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly schedule saved'**
+  String get scheduleSaved;
+
+  /// No description provided for @noSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'No weekly schedule added'**
+  String get noSchedule;
+
+  /// No description provided for @sunday.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunday'**
+  String get sunday;
+
+  /// No description provided for @monday.
+  ///
+  /// In en, this message translates to:
+  /// **'Monday'**
+  String get monday;
+
+  /// No description provided for @tuesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuesday'**
+  String get tuesday;
+
+  /// No description provided for @wednesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Wednesday'**
+  String get wednesday;
+
+  /// No description provided for @thursday.
+  ///
+  /// In en, this message translates to:
+  /// **'Thursday'**
+  String get thursday;
+
+  /// No description provided for @friday.
+  ///
+  /// In en, this message translates to:
+  /// **'Friday'**
+  String get friday;
+
+  /// No description provided for @saturday.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturday'**
+  String get saturday;
+
+  /// No description provided for @chooseTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose time'**
+  String get chooseTime;
+
+  /// No description provided for @saveSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Save schedule'**
+  String get saveSchedule;
+
+  /// No description provided for @scheduleSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the weekly schedule.'**
+  String get scheduleSaveFailed;
+
   /// No description provided for @dashboardSubtitle.
   ///
   /// In en, this message translates to:

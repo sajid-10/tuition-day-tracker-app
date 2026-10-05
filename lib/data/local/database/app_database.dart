@@ -21,6 +21,8 @@ class Students extends Table {
       text().withDefault(const Constant('tuition_days'))();
   IntColumn get paymentTriggerValue =>
       integer().withDefault(const Constant(30))();
+  IntColumn get completedDaysTarget =>
+      integer().withDefault(const Constant(12))();
   BoolColumn get active => boolean().withDefault(const Constant(true))();
   TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
@@ -57,6 +59,9 @@ class Sessions extends Table {
   IntColumn get requiredDurationSeconds => integer()();
   BoolColumn get completed => boolean().withDefault(const Constant(false))();
   TextColumn get source => text().withDefault(const Constant('manual'))();
+  IntColumn get activeSeconds => integer().withDefault(const Constant(0))();
+  DateTimeColumn get lastInsideAt => dateTime().nullable()();
+  DateTimeColumn get outsideSinceAt => dateTime().nullable()();
   RealColumn get startLatitude => real().nullable()();
   RealColumn get startLongitude => real().nullable()();
   RealColumn get endLatitude => real().nullable()();
@@ -103,7 +108,47 @@ class SyncQueue extends Table {
   Set<Column<Object>> get primaryKey => {id};
 }
 
-@DriftDatabase(tables: [Students, Schedules, Sessions, Payments, SyncQueue])
+class LocationLogs extends Table {
+  TextColumn get id => text()();
+  TextColumn get studentId =>
+      text().references(Students, #id, onDelete: KeyAction.cascade)();
+  TextColumn get sessionId =>
+      text().nullable().references(Sessions, #id, onDelete: KeyAction.setNull)();
+  RealColumn get latitude => real()();
+  RealColumn get longitude => real()();
+  RealColumn get accuracyMeters => real()();
+  RealColumn get distanceMeters => real()();
+  DateTimeColumn get recordedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+class ArrivalPrompts extends Table {
+  TextColumn get id => text()();
+  TextColumn get studentId =>
+      text().references(Students, #id, onDelete: KeyAction.cascade)();
+  RealColumn get latitude => real()();
+  RealColumn get longitude => real()();
+  DateTimeColumn get detectedAt => dateTime()();
+  TextColumn get status => text().withDefault(const Constant('pending'))();
+  DateTimeColumn get decidedAt => dateTime().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+@DriftDatabase(
+  tables: [
+    Students,
+    Schedules,
+    Sessions,
+    Payments,
+    SyncQueue,
+    LocationLogs,
+    ArrivalPrompts,
+  ],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase()
     : super(
@@ -119,5 +164,28 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (migrator) => migrator.createAll(),
+    onUpgrade: (migrator, from, to) async {
+      if (from < 2) {
+        await customStatement(
+          'ALTER TABLE students ADD COLUMN completed_days_target INTEGER NOT NULL DEFAULT 12',
+        );
+        await customStatement(
+          'ALTER TABLE sessions ADD COLUMN active_seconds INTEGER NOT NULL DEFAULT 0',
+        );
+        await customStatement(
+          'ALTER TABLE sessions ADD COLUMN last_inside_at INTEGER NULL',
+        );
+        await customStatement(
+          'ALTER TABLE sessions ADD COLUMN outside_since_at INTEGER NULL',
+        );
+        await migrator.createTable(locationLogs);
+        await migrator.createTable(arrivalPrompts);
+      }
+    },
+  );
 }

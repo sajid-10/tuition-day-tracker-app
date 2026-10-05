@@ -14,6 +14,7 @@ class DashboardScreen extends ConsumerWidget {
     final strings = AppLocalizations.of(context)!;
     final students = ref.watch(activeStudentsProvider);
     final colors = Theme.of(context).colorScheme;
+    //final settings = Theme.of(context).textTheme;
 
     return ListView(
       padding: const EdgeInsets.all(20),

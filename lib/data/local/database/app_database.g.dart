@@ -141,6 +141,17 @@ class $StudentsTable extends Students with TableInfo<$StudentsTable, Student> {
     requiredDuringInsert: false,
     defaultValue: const Constant(30),
   );
+  static const VerificationMeta _completedDaysTargetMeta =
+      const VerificationMeta('completedDaysTarget');
+  @override
+  late final GeneratedColumn<int> completedDaysTarget = GeneratedColumn<int>(
+    'completed_days_target',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(12),
+  );
   static const VerificationMeta _activeMeta = const VerificationMeta('active');
   @override
   late final GeneratedColumn<bool> active = GeneratedColumn<bool>(
@@ -212,6 +223,7 @@ class $StudentsTable extends Students with TableInfo<$StudentsTable, Student> {
     paymentRate,
     paymentTriggerType,
     paymentTriggerValue,
+    completedDaysTarget,
     active,
     notes,
     createdAt,
@@ -321,6 +333,15 @@ class $StudentsTable extends Students with TableInfo<$StudentsTable, Student> {
         ),
       );
     }
+    if (data.containsKey('completed_days_target')) {
+      context.handle(
+        _completedDaysTargetMeta,
+        completedDaysTarget.isAcceptableOrUnknown(
+          data['completed_days_target']!,
+          _completedDaysTargetMeta,
+        ),
+      );
+    }
     if (data.containsKey('active')) {
       context.handle(
         _activeMeta,
@@ -408,6 +429,10 @@ class $StudentsTable extends Students with TableInfo<$StudentsTable, Student> {
         DriftSqlType.int,
         data['${effectivePrefix}payment_trigger_value'],
       )!,
+      completedDaysTarget: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}completed_days_target'],
+      )!,
       active: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}active'],
@@ -450,6 +475,7 @@ class Student extends DataClass implements Insertable<Student> {
   final int paymentRate;
   final String paymentTriggerType;
   final int paymentTriggerValue;
+  final int completedDaysTarget;
   final bool active;
   final String? notes;
   final DateTime createdAt;
@@ -468,6 +494,7 @@ class Student extends DataClass implements Insertable<Student> {
     required this.paymentRate,
     required this.paymentTriggerType,
     required this.paymentTriggerValue,
+    required this.completedDaysTarget,
     required this.active,
     this.notes,
     required this.createdAt,
@@ -499,6 +526,7 @@ class Student extends DataClass implements Insertable<Student> {
     map['payment_rate'] = Variable<int>(paymentRate);
     map['payment_trigger_type'] = Variable<String>(paymentTriggerType);
     map['payment_trigger_value'] = Variable<int>(paymentTriggerValue);
+    map['completed_days_target'] = Variable<int>(completedDaysTarget);
     map['active'] = Variable<bool>(active);
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
@@ -533,6 +561,7 @@ class Student extends DataClass implements Insertable<Student> {
       paymentRate: Value(paymentRate),
       paymentTriggerType: Value(paymentTriggerType),
       paymentTriggerValue: Value(paymentTriggerValue),
+      completedDaysTarget: Value(completedDaysTarget),
       active: Value(active),
       notes: notes == null && nullToAbsent
           ? const Value.absent()
@@ -573,6 +602,9 @@ class Student extends DataClass implements Insertable<Student> {
       paymentTriggerValue: serializer.fromJson<int>(
         json['paymentTriggerValue'],
       ),
+      completedDaysTarget: serializer.fromJson<int>(
+        json['completedDaysTarget'],
+      ),
       active: serializer.fromJson<bool>(json['active']),
       notes: serializer.fromJson<String?>(json['notes']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
@@ -598,6 +630,7 @@ class Student extends DataClass implements Insertable<Student> {
       'paymentRate': serializer.toJson<int>(paymentRate),
       'paymentTriggerType': serializer.toJson<String>(paymentTriggerType),
       'paymentTriggerValue': serializer.toJson<int>(paymentTriggerValue),
+      'completedDaysTarget': serializer.toJson<int>(completedDaysTarget),
       'active': serializer.toJson<bool>(active),
       'notes': serializer.toJson<String?>(notes),
       'createdAt': serializer.toJson<DateTime>(createdAt),
@@ -619,6 +652,7 @@ class Student extends DataClass implements Insertable<Student> {
     int? paymentRate,
     String? paymentTriggerType,
     int? paymentTriggerValue,
+    int? completedDaysTarget,
     bool? active,
     Value<String?> notes = const Value.absent(),
     DateTime? createdAt,
@@ -639,6 +673,7 @@ class Student extends DataClass implements Insertable<Student> {
     paymentRate: paymentRate ?? this.paymentRate,
     paymentTriggerType: paymentTriggerType ?? this.paymentTriggerType,
     paymentTriggerValue: paymentTriggerValue ?? this.paymentTriggerValue,
+    completedDaysTarget: completedDaysTarget ?? this.completedDaysTarget,
     active: active ?? this.active,
     notes: notes.present ? notes.value : this.notes,
     createdAt: createdAt ?? this.createdAt,
@@ -671,6 +706,9 @@ class Student extends DataClass implements Insertable<Student> {
       paymentTriggerValue: data.paymentTriggerValue.present
           ? data.paymentTriggerValue.value
           : this.paymentTriggerValue,
+      completedDaysTarget: data.completedDaysTarget.present
+          ? data.completedDaysTarget.value
+          : this.completedDaysTarget,
       active: data.active.present ? data.active.value : this.active,
       notes: data.notes.present ? data.notes.value : this.notes,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
@@ -694,6 +732,7 @@ class Student extends DataClass implements Insertable<Student> {
           ..write('paymentRate: $paymentRate, ')
           ..write('paymentTriggerType: $paymentTriggerType, ')
           ..write('paymentTriggerValue: $paymentTriggerValue, ')
+          ..write('completedDaysTarget: $completedDaysTarget, ')
           ..write('active: $active, ')
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
@@ -717,6 +756,7 @@ class Student extends DataClass implements Insertable<Student> {
     paymentRate,
     paymentTriggerType,
     paymentTriggerValue,
+    completedDaysTarget,
     active,
     notes,
     createdAt,
@@ -739,6 +779,7 @@ class Student extends DataClass implements Insertable<Student> {
           other.paymentRate == this.paymentRate &&
           other.paymentTriggerType == this.paymentTriggerType &&
           other.paymentTriggerValue == this.paymentTriggerValue &&
+          other.completedDaysTarget == this.completedDaysTarget &&
           other.active == this.active &&
           other.notes == this.notes &&
           other.createdAt == this.createdAt &&
@@ -759,6 +800,7 @@ class StudentsCompanion extends UpdateCompanion<Student> {
   final Value<int> paymentRate;
   final Value<String> paymentTriggerType;
   final Value<int> paymentTriggerValue;
+  final Value<int> completedDaysTarget;
   final Value<bool> active;
   final Value<String?> notes;
   final Value<DateTime> createdAt;
@@ -778,6 +820,7 @@ class StudentsCompanion extends UpdateCompanion<Student> {
     this.paymentRate = const Value.absent(),
     this.paymentTriggerType = const Value.absent(),
     this.paymentTriggerValue = const Value.absent(),
+    this.completedDaysTarget = const Value.absent(),
     this.active = const Value.absent(),
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -798,6 +841,7 @@ class StudentsCompanion extends UpdateCompanion<Student> {
     this.paymentRate = const Value.absent(),
     this.paymentTriggerType = const Value.absent(),
     this.paymentTriggerValue = const Value.absent(),
+    this.completedDaysTarget = const Value.absent(),
     this.active = const Value.absent(),
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -819,6 +863,7 @@ class StudentsCompanion extends UpdateCompanion<Student> {
     Expression<int>? paymentRate,
     Expression<String>? paymentTriggerType,
     Expression<int>? paymentTriggerValue,
+    Expression<int>? completedDaysTarget,
     Expression<bool>? active,
     Expression<String>? notes,
     Expression<DateTime>? createdAt,
@@ -844,6 +889,8 @@ class StudentsCompanion extends UpdateCompanion<Student> {
         'payment_trigger_type': paymentTriggerType,
       if (paymentTriggerValue != null)
         'payment_trigger_value': paymentTriggerValue,
+      if (completedDaysTarget != null)
+        'completed_days_target': completedDaysTarget,
       if (active != null) 'active': active,
       if (notes != null) 'notes': notes,
       if (createdAt != null) 'created_at': createdAt,
@@ -866,6 +913,7 @@ class StudentsCompanion extends UpdateCompanion<Student> {
     Value<int>? paymentRate,
     Value<String>? paymentTriggerType,
     Value<int>? paymentTriggerValue,
+    Value<int>? completedDaysTarget,
     Value<bool>? active,
     Value<String?>? notes,
     Value<DateTime>? createdAt,
@@ -888,6 +936,7 @@ class StudentsCompanion extends UpdateCompanion<Student> {
       paymentRate: paymentRate ?? this.paymentRate,
       paymentTriggerType: paymentTriggerType ?? this.paymentTriggerType,
       paymentTriggerValue: paymentTriggerValue ?? this.paymentTriggerValue,
+      completedDaysTarget: completedDaysTarget ?? this.completedDaysTarget,
       active: active ?? this.active,
       notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
@@ -940,6 +989,9 @@ class StudentsCompanion extends UpdateCompanion<Student> {
     if (paymentTriggerValue.present) {
       map['payment_trigger_value'] = Variable<int>(paymentTriggerValue.value);
     }
+    if (completedDaysTarget.present) {
+      map['completed_days_target'] = Variable<int>(completedDaysTarget.value);
+    }
     if (active.present) {
       map['active'] = Variable<bool>(active.value);
     }
@@ -976,6 +1028,7 @@ class StudentsCompanion extends UpdateCompanion<Student> {
           ..write('paymentRate: $paymentRate, ')
           ..write('paymentTriggerType: $paymentTriggerType, ')
           ..write('paymentTriggerValue: $paymentTriggerValue, ')
+          ..write('completedDaysTarget: $completedDaysTarget, ')
           ..write('active: $active, ')
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
@@ -1657,6 +1710,41 @@ class $SessionsTable extends Sessions with TableInfo<$SessionsTable, Session> {
     requiredDuringInsert: false,
     defaultValue: const Constant('manual'),
   );
+  static const VerificationMeta _activeSecondsMeta = const VerificationMeta(
+    'activeSeconds',
+  );
+  @override
+  late final GeneratedColumn<int> activeSeconds = GeneratedColumn<int>(
+    'active_seconds',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _lastInsideAtMeta = const VerificationMeta(
+    'lastInsideAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastInsideAt = GeneratedColumn<DateTime>(
+    'last_inside_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _outsideSinceAtMeta = const VerificationMeta(
+    'outsideSinceAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> outsideSinceAt =
+      GeneratedColumn<DateTime>(
+        'outside_since_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _startLatitudeMeta = const VerificationMeta(
     'startLatitude',
   );
@@ -1755,6 +1843,9 @@ class $SessionsTable extends Sessions with TableInfo<$SessionsTable, Session> {
     requiredDurationSeconds,
     completed,
     source,
+    activeSeconds,
+    lastInsideAt,
+    outsideSinceAt,
     startLatitude,
     startLongitude,
     endLatitude,
@@ -1833,6 +1924,33 @@ class $SessionsTable extends Sessions with TableInfo<$SessionsTable, Session> {
       context.handle(
         _sourceMeta,
         source.isAcceptableOrUnknown(data['source']!, _sourceMeta),
+      );
+    }
+    if (data.containsKey('active_seconds')) {
+      context.handle(
+        _activeSecondsMeta,
+        activeSeconds.isAcceptableOrUnknown(
+          data['active_seconds']!,
+          _activeSecondsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_inside_at')) {
+      context.handle(
+        _lastInsideAtMeta,
+        lastInsideAt.isAcceptableOrUnknown(
+          data['last_inside_at']!,
+          _lastInsideAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('outside_since_at')) {
+      context.handle(
+        _outsideSinceAtMeta,
+        outsideSinceAt.isAcceptableOrUnknown(
+          data['outside_since_at']!,
+          _outsideSinceAtMeta,
+        ),
       );
     }
     if (data.containsKey('start_latitude')) {
@@ -1936,6 +2054,18 @@ class $SessionsTable extends Sessions with TableInfo<$SessionsTable, Session> {
         DriftSqlType.string,
         data['${effectivePrefix}source'],
       )!,
+      activeSeconds: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}active_seconds'],
+      )!,
+      lastInsideAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_inside_at'],
+      ),
+      outsideSinceAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}outside_since_at'],
+      ),
       startLatitude: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}start_latitude'],
@@ -1986,6 +2116,9 @@ class Session extends DataClass implements Insertable<Session> {
   final int requiredDurationSeconds;
   final bool completed;
   final String source;
+  final int activeSeconds;
+  final DateTime? lastInsideAt;
+  final DateTime? outsideSinceAt;
   final double? startLatitude;
   final double? startLongitude;
   final double? endLatitude;
@@ -2003,6 +2136,9 @@ class Session extends DataClass implements Insertable<Session> {
     required this.requiredDurationSeconds,
     required this.completed,
     required this.source,
+    required this.activeSeconds,
+    this.lastInsideAt,
+    this.outsideSinceAt,
     this.startLatitude,
     this.startLongitude,
     this.endLatitude,
@@ -2027,6 +2163,13 @@ class Session extends DataClass implements Insertable<Session> {
     map['required_duration_seconds'] = Variable<int>(requiredDurationSeconds);
     map['completed'] = Variable<bool>(completed);
     map['source'] = Variable<String>(source);
+    map['active_seconds'] = Variable<int>(activeSeconds);
+    if (!nullToAbsent || lastInsideAt != null) {
+      map['last_inside_at'] = Variable<DateTime>(lastInsideAt);
+    }
+    if (!nullToAbsent || outsideSinceAt != null) {
+      map['outside_since_at'] = Variable<DateTime>(outsideSinceAt);
+    }
     if (!nullToAbsent || startLatitude != null) {
       map['start_latitude'] = Variable<double>(startLatitude);
     }
@@ -2064,6 +2207,13 @@ class Session extends DataClass implements Insertable<Session> {
       requiredDurationSeconds: Value(requiredDurationSeconds),
       completed: Value(completed),
       source: Value(source),
+      activeSeconds: Value(activeSeconds),
+      lastInsideAt: lastInsideAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastInsideAt),
+      outsideSinceAt: outsideSinceAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(outsideSinceAt),
       startLatitude: startLatitude == null && nullToAbsent
           ? const Value.absent()
           : Value(startLatitude),
@@ -2103,6 +2253,9 @@ class Session extends DataClass implements Insertable<Session> {
       ),
       completed: serializer.fromJson<bool>(json['completed']),
       source: serializer.fromJson<String>(json['source']),
+      activeSeconds: serializer.fromJson<int>(json['activeSeconds']),
+      lastInsideAt: serializer.fromJson<DateTime?>(json['lastInsideAt']),
+      outsideSinceAt: serializer.fromJson<DateTime?>(json['outsideSinceAt']),
       startLatitude: serializer.fromJson<double?>(json['startLatitude']),
       startLongitude: serializer.fromJson<double?>(json['startLongitude']),
       endLatitude: serializer.fromJson<double?>(json['endLatitude']),
@@ -2127,6 +2280,9 @@ class Session extends DataClass implements Insertable<Session> {
       ),
       'completed': serializer.toJson<bool>(completed),
       'source': serializer.toJson<String>(source),
+      'activeSeconds': serializer.toJson<int>(activeSeconds),
+      'lastInsideAt': serializer.toJson<DateTime?>(lastInsideAt),
+      'outsideSinceAt': serializer.toJson<DateTime?>(outsideSinceAt),
       'startLatitude': serializer.toJson<double?>(startLatitude),
       'startLongitude': serializer.toJson<double?>(startLongitude),
       'endLatitude': serializer.toJson<double?>(endLatitude),
@@ -2147,6 +2303,9 @@ class Session extends DataClass implements Insertable<Session> {
     int? requiredDurationSeconds,
     bool? completed,
     String? source,
+    int? activeSeconds,
+    Value<DateTime?> lastInsideAt = const Value.absent(),
+    Value<DateTime?> outsideSinceAt = const Value.absent(),
     Value<double?> startLatitude = const Value.absent(),
     Value<double?> startLongitude = const Value.absent(),
     Value<double?> endLatitude = const Value.absent(),
@@ -2167,6 +2326,11 @@ class Session extends DataClass implements Insertable<Session> {
         requiredDurationSeconds ?? this.requiredDurationSeconds,
     completed: completed ?? this.completed,
     source: source ?? this.source,
+    activeSeconds: activeSeconds ?? this.activeSeconds,
+    lastInsideAt: lastInsideAt.present ? lastInsideAt.value : this.lastInsideAt,
+    outsideSinceAt: outsideSinceAt.present
+        ? outsideSinceAt.value
+        : this.outsideSinceAt,
     startLatitude: startLatitude.present
         ? startLatitude.value
         : this.startLatitude,
@@ -2194,6 +2358,15 @@ class Session extends DataClass implements Insertable<Session> {
           : this.requiredDurationSeconds,
       completed: data.completed.present ? data.completed.value : this.completed,
       source: data.source.present ? data.source.value : this.source,
+      activeSeconds: data.activeSeconds.present
+          ? data.activeSeconds.value
+          : this.activeSeconds,
+      lastInsideAt: data.lastInsideAt.present
+          ? data.lastInsideAt.value
+          : this.lastInsideAt,
+      outsideSinceAt: data.outsideSinceAt.present
+          ? data.outsideSinceAt.value
+          : this.outsideSinceAt,
       startLatitude: data.startLatitude.present
           ? data.startLatitude.value
           : this.startLatitude,
@@ -2224,6 +2397,9 @@ class Session extends DataClass implements Insertable<Session> {
           ..write('requiredDurationSeconds: $requiredDurationSeconds, ')
           ..write('completed: $completed, ')
           ..write('source: $source, ')
+          ..write('activeSeconds: $activeSeconds, ')
+          ..write('lastInsideAt: $lastInsideAt, ')
+          ..write('outsideSinceAt: $outsideSinceAt, ')
           ..write('startLatitude: $startLatitude, ')
           ..write('startLongitude: $startLongitude, ')
           ..write('endLatitude: $endLatitude, ')
@@ -2246,6 +2422,9 @@ class Session extends DataClass implements Insertable<Session> {
     requiredDurationSeconds,
     completed,
     source,
+    activeSeconds,
+    lastInsideAt,
+    outsideSinceAt,
     startLatitude,
     startLongitude,
     endLatitude,
@@ -2267,6 +2446,9 @@ class Session extends DataClass implements Insertable<Session> {
           other.requiredDurationSeconds == this.requiredDurationSeconds &&
           other.completed == this.completed &&
           other.source == this.source &&
+          other.activeSeconds == this.activeSeconds &&
+          other.lastInsideAt == this.lastInsideAt &&
+          other.outsideSinceAt == this.outsideSinceAt &&
           other.startLatitude == this.startLatitude &&
           other.startLongitude == this.startLongitude &&
           other.endLatitude == this.endLatitude &&
@@ -2286,6 +2468,9 @@ class SessionsCompanion extends UpdateCompanion<Session> {
   final Value<int> requiredDurationSeconds;
   final Value<bool> completed;
   final Value<String> source;
+  final Value<int> activeSeconds;
+  final Value<DateTime?> lastInsideAt;
+  final Value<DateTime?> outsideSinceAt;
   final Value<double?> startLatitude;
   final Value<double?> startLongitude;
   final Value<double?> endLatitude;
@@ -2304,6 +2489,9 @@ class SessionsCompanion extends UpdateCompanion<Session> {
     this.requiredDurationSeconds = const Value.absent(),
     this.completed = const Value.absent(),
     this.source = const Value.absent(),
+    this.activeSeconds = const Value.absent(),
+    this.lastInsideAt = const Value.absent(),
+    this.outsideSinceAt = const Value.absent(),
     this.startLatitude = const Value.absent(),
     this.startLongitude = const Value.absent(),
     this.endLatitude = const Value.absent(),
@@ -2323,6 +2511,9 @@ class SessionsCompanion extends UpdateCompanion<Session> {
     required int requiredDurationSeconds,
     this.completed = const Value.absent(),
     this.source = const Value.absent(),
+    this.activeSeconds = const Value.absent(),
+    this.lastInsideAt = const Value.absent(),
+    this.outsideSinceAt = const Value.absent(),
     this.startLatitude = const Value.absent(),
     this.startLongitude = const Value.absent(),
     this.endLatitude = const Value.absent(),
@@ -2345,6 +2536,9 @@ class SessionsCompanion extends UpdateCompanion<Session> {
     Expression<int>? requiredDurationSeconds,
     Expression<bool>? completed,
     Expression<String>? source,
+    Expression<int>? activeSeconds,
+    Expression<DateTime>? lastInsideAt,
+    Expression<DateTime>? outsideSinceAt,
     Expression<double>? startLatitude,
     Expression<double>? startLongitude,
     Expression<double>? endLatitude,
@@ -2365,6 +2559,9 @@ class SessionsCompanion extends UpdateCompanion<Session> {
         'required_duration_seconds': requiredDurationSeconds,
       if (completed != null) 'completed': completed,
       if (source != null) 'source': source,
+      if (activeSeconds != null) 'active_seconds': activeSeconds,
+      if (lastInsideAt != null) 'last_inside_at': lastInsideAt,
+      if (outsideSinceAt != null) 'outside_since_at': outsideSinceAt,
       if (startLatitude != null) 'start_latitude': startLatitude,
       if (startLongitude != null) 'start_longitude': startLongitude,
       if (endLatitude != null) 'end_latitude': endLatitude,
@@ -2386,6 +2583,9 @@ class SessionsCompanion extends UpdateCompanion<Session> {
     Value<int>? requiredDurationSeconds,
     Value<bool>? completed,
     Value<String>? source,
+    Value<int>? activeSeconds,
+    Value<DateTime?>? lastInsideAt,
+    Value<DateTime?>? outsideSinceAt,
     Value<double?>? startLatitude,
     Value<double?>? startLongitude,
     Value<double?>? endLatitude,
@@ -2406,6 +2606,9 @@ class SessionsCompanion extends UpdateCompanion<Session> {
           requiredDurationSeconds ?? this.requiredDurationSeconds,
       completed: completed ?? this.completed,
       source: source ?? this.source,
+      activeSeconds: activeSeconds ?? this.activeSeconds,
+      lastInsideAt: lastInsideAt ?? this.lastInsideAt,
+      outsideSinceAt: outsideSinceAt ?? this.outsideSinceAt,
       startLatitude: startLatitude ?? this.startLatitude,
       startLongitude: startLongitude ?? this.startLongitude,
       endLatitude: endLatitude ?? this.endLatitude,
@@ -2446,6 +2649,15 @@ class SessionsCompanion extends UpdateCompanion<Session> {
     }
     if (source.present) {
       map['source'] = Variable<String>(source.value);
+    }
+    if (activeSeconds.present) {
+      map['active_seconds'] = Variable<int>(activeSeconds.value);
+    }
+    if (lastInsideAt.present) {
+      map['last_inside_at'] = Variable<DateTime>(lastInsideAt.value);
+    }
+    if (outsideSinceAt.present) {
+      map['outside_since_at'] = Variable<DateTime>(outsideSinceAt.value);
     }
     if (startLatitude.present) {
       map['start_latitude'] = Variable<double>(startLatitude.value);
@@ -2488,6 +2700,9 @@ class SessionsCompanion extends UpdateCompanion<Session> {
           ..write('requiredDurationSeconds: $requiredDurationSeconds, ')
           ..write('completed: $completed, ')
           ..write('source: $source, ')
+          ..write('activeSeconds: $activeSeconds, ')
+          ..write('lastInsideAt: $lastInsideAt, ')
+          ..write('outsideSinceAt: $outsideSinceAt, ')
           ..write('startLatitude: $startLatitude, ')
           ..write('startLongitude: $startLongitude, ')
           ..write('endLatitude: $endLatitude, ')
@@ -3722,6 +3937,1003 @@ class SyncQueueCompanion extends UpdateCompanion<SyncQueueData> {
   }
 }
 
+class $LocationLogsTable extends LocationLogs
+    with TableInfo<$LocationLogsTable, LocationLog> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LocationLogsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _studentIdMeta = const VerificationMeta(
+    'studentId',
+  );
+  @override
+  late final GeneratedColumn<String> studentId = GeneratedColumn<String>(
+    'student_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES students (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _sessionIdMeta = const VerificationMeta(
+    'sessionId',
+  );
+  @override
+  late final GeneratedColumn<String> sessionId = GeneratedColumn<String>(
+    'session_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES sessions (id) ON DELETE SET NULL',
+    ),
+  );
+  static const VerificationMeta _latitudeMeta = const VerificationMeta(
+    'latitude',
+  );
+  @override
+  late final GeneratedColumn<double> latitude = GeneratedColumn<double>(
+    'latitude',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _longitudeMeta = const VerificationMeta(
+    'longitude',
+  );
+  @override
+  late final GeneratedColumn<double> longitude = GeneratedColumn<double>(
+    'longitude',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _accuracyMetersMeta = const VerificationMeta(
+    'accuracyMeters',
+  );
+  @override
+  late final GeneratedColumn<double> accuracyMeters = GeneratedColumn<double>(
+    'accuracy_meters',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _distanceMetersMeta = const VerificationMeta(
+    'distanceMeters',
+  );
+  @override
+  late final GeneratedColumn<double> distanceMeters = GeneratedColumn<double>(
+    'distance_meters',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _recordedAtMeta = const VerificationMeta(
+    'recordedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> recordedAt = GeneratedColumn<DateTime>(
+    'recorded_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    studentId,
+    sessionId,
+    latitude,
+    longitude,
+    accuracyMeters,
+    distanceMeters,
+    recordedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'location_logs';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocationLog> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('student_id')) {
+      context.handle(
+        _studentIdMeta,
+        studentId.isAcceptableOrUnknown(data['student_id']!, _studentIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_studentIdMeta);
+    }
+    if (data.containsKey('session_id')) {
+      context.handle(
+        _sessionIdMeta,
+        sessionId.isAcceptableOrUnknown(data['session_id']!, _sessionIdMeta),
+      );
+    }
+    if (data.containsKey('latitude')) {
+      context.handle(
+        _latitudeMeta,
+        latitude.isAcceptableOrUnknown(data['latitude']!, _latitudeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_latitudeMeta);
+    }
+    if (data.containsKey('longitude')) {
+      context.handle(
+        _longitudeMeta,
+        longitude.isAcceptableOrUnknown(data['longitude']!, _longitudeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_longitudeMeta);
+    }
+    if (data.containsKey('accuracy_meters')) {
+      context.handle(
+        _accuracyMetersMeta,
+        accuracyMeters.isAcceptableOrUnknown(
+          data['accuracy_meters']!,
+          _accuracyMetersMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_accuracyMetersMeta);
+    }
+    if (data.containsKey('distance_meters')) {
+      context.handle(
+        _distanceMetersMeta,
+        distanceMeters.isAcceptableOrUnknown(
+          data['distance_meters']!,
+          _distanceMetersMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_distanceMetersMeta);
+    }
+    if (data.containsKey('recorded_at')) {
+      context.handle(
+        _recordedAtMeta,
+        recordedAt.isAcceptableOrUnknown(data['recorded_at']!, _recordedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_recordedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LocationLog map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocationLog(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      studentId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}student_id'],
+      )!,
+      sessionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}session_id'],
+      ),
+      latitude: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}latitude'],
+      )!,
+      longitude: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}longitude'],
+      )!,
+      accuracyMeters: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}accuracy_meters'],
+      )!,
+      distanceMeters: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}distance_meters'],
+      )!,
+      recordedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}recorded_at'],
+      )!,
+    );
+  }
+
+  @override
+  $LocationLogsTable createAlias(String alias) {
+    return $LocationLogsTable(attachedDatabase, alias);
+  }
+}
+
+class LocationLog extends DataClass implements Insertable<LocationLog> {
+  final String id;
+  final String studentId;
+  final String? sessionId;
+  final double latitude;
+  final double longitude;
+  final double accuracyMeters;
+  final double distanceMeters;
+  final DateTime recordedAt;
+  const LocationLog({
+    required this.id,
+    required this.studentId,
+    this.sessionId,
+    required this.latitude,
+    required this.longitude,
+    required this.accuracyMeters,
+    required this.distanceMeters,
+    required this.recordedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['student_id'] = Variable<String>(studentId);
+    if (!nullToAbsent || sessionId != null) {
+      map['session_id'] = Variable<String>(sessionId);
+    }
+    map['latitude'] = Variable<double>(latitude);
+    map['longitude'] = Variable<double>(longitude);
+    map['accuracy_meters'] = Variable<double>(accuracyMeters);
+    map['distance_meters'] = Variable<double>(distanceMeters);
+    map['recorded_at'] = Variable<DateTime>(recordedAt);
+    return map;
+  }
+
+  LocationLogsCompanion toCompanion(bool nullToAbsent) {
+    return LocationLogsCompanion(
+      id: Value(id),
+      studentId: Value(studentId),
+      sessionId: sessionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sessionId),
+      latitude: Value(latitude),
+      longitude: Value(longitude),
+      accuracyMeters: Value(accuracyMeters),
+      distanceMeters: Value(distanceMeters),
+      recordedAt: Value(recordedAt),
+    );
+  }
+
+  factory LocationLog.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocationLog(
+      id: serializer.fromJson<String>(json['id']),
+      studentId: serializer.fromJson<String>(json['studentId']),
+      sessionId: serializer.fromJson<String?>(json['sessionId']),
+      latitude: serializer.fromJson<double>(json['latitude']),
+      longitude: serializer.fromJson<double>(json['longitude']),
+      accuracyMeters: serializer.fromJson<double>(json['accuracyMeters']),
+      distanceMeters: serializer.fromJson<double>(json['distanceMeters']),
+      recordedAt: serializer.fromJson<DateTime>(json['recordedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'studentId': serializer.toJson<String>(studentId),
+      'sessionId': serializer.toJson<String?>(sessionId),
+      'latitude': serializer.toJson<double>(latitude),
+      'longitude': serializer.toJson<double>(longitude),
+      'accuracyMeters': serializer.toJson<double>(accuracyMeters),
+      'distanceMeters': serializer.toJson<double>(distanceMeters),
+      'recordedAt': serializer.toJson<DateTime>(recordedAt),
+    };
+  }
+
+  LocationLog copyWith({
+    String? id,
+    String? studentId,
+    Value<String?> sessionId = const Value.absent(),
+    double? latitude,
+    double? longitude,
+    double? accuracyMeters,
+    double? distanceMeters,
+    DateTime? recordedAt,
+  }) => LocationLog(
+    id: id ?? this.id,
+    studentId: studentId ?? this.studentId,
+    sessionId: sessionId.present ? sessionId.value : this.sessionId,
+    latitude: latitude ?? this.latitude,
+    longitude: longitude ?? this.longitude,
+    accuracyMeters: accuracyMeters ?? this.accuracyMeters,
+    distanceMeters: distanceMeters ?? this.distanceMeters,
+    recordedAt: recordedAt ?? this.recordedAt,
+  );
+  LocationLog copyWithCompanion(LocationLogsCompanion data) {
+    return LocationLog(
+      id: data.id.present ? data.id.value : this.id,
+      studentId: data.studentId.present ? data.studentId.value : this.studentId,
+      sessionId: data.sessionId.present ? data.sessionId.value : this.sessionId,
+      latitude: data.latitude.present ? data.latitude.value : this.latitude,
+      longitude: data.longitude.present ? data.longitude.value : this.longitude,
+      accuracyMeters: data.accuracyMeters.present
+          ? data.accuracyMeters.value
+          : this.accuracyMeters,
+      distanceMeters: data.distanceMeters.present
+          ? data.distanceMeters.value
+          : this.distanceMeters,
+      recordedAt: data.recordedAt.present
+          ? data.recordedAt.value
+          : this.recordedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocationLog(')
+          ..write('id: $id, ')
+          ..write('studentId: $studentId, ')
+          ..write('sessionId: $sessionId, ')
+          ..write('latitude: $latitude, ')
+          ..write('longitude: $longitude, ')
+          ..write('accuracyMeters: $accuracyMeters, ')
+          ..write('distanceMeters: $distanceMeters, ')
+          ..write('recordedAt: $recordedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    studentId,
+    sessionId,
+    latitude,
+    longitude,
+    accuracyMeters,
+    distanceMeters,
+    recordedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocationLog &&
+          other.id == this.id &&
+          other.studentId == this.studentId &&
+          other.sessionId == this.sessionId &&
+          other.latitude == this.latitude &&
+          other.longitude == this.longitude &&
+          other.accuracyMeters == this.accuracyMeters &&
+          other.distanceMeters == this.distanceMeters &&
+          other.recordedAt == this.recordedAt);
+}
+
+class LocationLogsCompanion extends UpdateCompanion<LocationLog> {
+  final Value<String> id;
+  final Value<String> studentId;
+  final Value<String?> sessionId;
+  final Value<double> latitude;
+  final Value<double> longitude;
+  final Value<double> accuracyMeters;
+  final Value<double> distanceMeters;
+  final Value<DateTime> recordedAt;
+  final Value<int> rowid;
+  const LocationLogsCompanion({
+    this.id = const Value.absent(),
+    this.studentId = const Value.absent(),
+    this.sessionId = const Value.absent(),
+    this.latitude = const Value.absent(),
+    this.longitude = const Value.absent(),
+    this.accuracyMeters = const Value.absent(),
+    this.distanceMeters = const Value.absent(),
+    this.recordedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LocationLogsCompanion.insert({
+    required String id,
+    required String studentId,
+    this.sessionId = const Value.absent(),
+    required double latitude,
+    required double longitude,
+    required double accuracyMeters,
+    required double distanceMeters,
+    required DateTime recordedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       studentId = Value(studentId),
+       latitude = Value(latitude),
+       longitude = Value(longitude),
+       accuracyMeters = Value(accuracyMeters),
+       distanceMeters = Value(distanceMeters),
+       recordedAt = Value(recordedAt);
+  static Insertable<LocationLog> custom({
+    Expression<String>? id,
+    Expression<String>? studentId,
+    Expression<String>? sessionId,
+    Expression<double>? latitude,
+    Expression<double>? longitude,
+    Expression<double>? accuracyMeters,
+    Expression<double>? distanceMeters,
+    Expression<DateTime>? recordedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (studentId != null) 'student_id': studentId,
+      if (sessionId != null) 'session_id': sessionId,
+      if (latitude != null) 'latitude': latitude,
+      if (longitude != null) 'longitude': longitude,
+      if (accuracyMeters != null) 'accuracy_meters': accuracyMeters,
+      if (distanceMeters != null) 'distance_meters': distanceMeters,
+      if (recordedAt != null) 'recorded_at': recordedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LocationLogsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? studentId,
+    Value<String?>? sessionId,
+    Value<double>? latitude,
+    Value<double>? longitude,
+    Value<double>? accuracyMeters,
+    Value<double>? distanceMeters,
+    Value<DateTime>? recordedAt,
+    Value<int>? rowid,
+  }) {
+    return LocationLogsCompanion(
+      id: id ?? this.id,
+      studentId: studentId ?? this.studentId,
+      sessionId: sessionId ?? this.sessionId,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      accuracyMeters: accuracyMeters ?? this.accuracyMeters,
+      distanceMeters: distanceMeters ?? this.distanceMeters,
+      recordedAt: recordedAt ?? this.recordedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (studentId.present) {
+      map['student_id'] = Variable<String>(studentId.value);
+    }
+    if (sessionId.present) {
+      map['session_id'] = Variable<String>(sessionId.value);
+    }
+    if (latitude.present) {
+      map['latitude'] = Variable<double>(latitude.value);
+    }
+    if (longitude.present) {
+      map['longitude'] = Variable<double>(longitude.value);
+    }
+    if (accuracyMeters.present) {
+      map['accuracy_meters'] = Variable<double>(accuracyMeters.value);
+    }
+    if (distanceMeters.present) {
+      map['distance_meters'] = Variable<double>(distanceMeters.value);
+    }
+    if (recordedAt.present) {
+      map['recorded_at'] = Variable<DateTime>(recordedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocationLogsCompanion(')
+          ..write('id: $id, ')
+          ..write('studentId: $studentId, ')
+          ..write('sessionId: $sessionId, ')
+          ..write('latitude: $latitude, ')
+          ..write('longitude: $longitude, ')
+          ..write('accuracyMeters: $accuracyMeters, ')
+          ..write('distanceMeters: $distanceMeters, ')
+          ..write('recordedAt: $recordedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ArrivalPromptsTable extends ArrivalPrompts
+    with TableInfo<$ArrivalPromptsTable, ArrivalPrompt> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ArrivalPromptsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _studentIdMeta = const VerificationMeta(
+    'studentId',
+  );
+  @override
+  late final GeneratedColumn<String> studentId = GeneratedColumn<String>(
+    'student_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES students (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _latitudeMeta = const VerificationMeta(
+    'latitude',
+  );
+  @override
+  late final GeneratedColumn<double> latitude = GeneratedColumn<double>(
+    'latitude',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _longitudeMeta = const VerificationMeta(
+    'longitude',
+  );
+  @override
+  late final GeneratedColumn<double> longitude = GeneratedColumn<double>(
+    'longitude',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _detectedAtMeta = const VerificationMeta(
+    'detectedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> detectedAt = GeneratedColumn<DateTime>(
+    'detected_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('pending'),
+  );
+  static const VerificationMeta _decidedAtMeta = const VerificationMeta(
+    'decidedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> decidedAt = GeneratedColumn<DateTime>(
+    'decided_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    studentId,
+    latitude,
+    longitude,
+    detectedAt,
+    status,
+    decidedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'arrival_prompts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ArrivalPrompt> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('student_id')) {
+      context.handle(
+        _studentIdMeta,
+        studentId.isAcceptableOrUnknown(data['student_id']!, _studentIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_studentIdMeta);
+    }
+    if (data.containsKey('latitude')) {
+      context.handle(
+        _latitudeMeta,
+        latitude.isAcceptableOrUnknown(data['latitude']!, _latitudeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_latitudeMeta);
+    }
+    if (data.containsKey('longitude')) {
+      context.handle(
+        _longitudeMeta,
+        longitude.isAcceptableOrUnknown(data['longitude']!, _longitudeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_longitudeMeta);
+    }
+    if (data.containsKey('detected_at')) {
+      context.handle(
+        _detectedAtMeta,
+        detectedAt.isAcceptableOrUnknown(data['detected_at']!, _detectedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_detectedAtMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('decided_at')) {
+      context.handle(
+        _decidedAtMeta,
+        decidedAt.isAcceptableOrUnknown(data['decided_at']!, _decidedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ArrivalPrompt map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ArrivalPrompt(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      studentId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}student_id'],
+      )!,
+      latitude: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}latitude'],
+      )!,
+      longitude: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}longitude'],
+      )!,
+      detectedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}detected_at'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      decidedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}decided_at'],
+      ),
+    );
+  }
+
+  @override
+  $ArrivalPromptsTable createAlias(String alias) {
+    return $ArrivalPromptsTable(attachedDatabase, alias);
+  }
+}
+
+class ArrivalPrompt extends DataClass implements Insertable<ArrivalPrompt> {
+  final String id;
+  final String studentId;
+  final double latitude;
+  final double longitude;
+  final DateTime detectedAt;
+  final String status;
+  final DateTime? decidedAt;
+  const ArrivalPrompt({
+    required this.id,
+    required this.studentId,
+    required this.latitude,
+    required this.longitude,
+    required this.detectedAt,
+    required this.status,
+    this.decidedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['student_id'] = Variable<String>(studentId);
+    map['latitude'] = Variable<double>(latitude);
+    map['longitude'] = Variable<double>(longitude);
+    map['detected_at'] = Variable<DateTime>(detectedAt);
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || decidedAt != null) {
+      map['decided_at'] = Variable<DateTime>(decidedAt);
+    }
+    return map;
+  }
+
+  ArrivalPromptsCompanion toCompanion(bool nullToAbsent) {
+    return ArrivalPromptsCompanion(
+      id: Value(id),
+      studentId: Value(studentId),
+      latitude: Value(latitude),
+      longitude: Value(longitude),
+      detectedAt: Value(detectedAt),
+      status: Value(status),
+      decidedAt: decidedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(decidedAt),
+    );
+  }
+
+  factory ArrivalPrompt.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ArrivalPrompt(
+      id: serializer.fromJson<String>(json['id']),
+      studentId: serializer.fromJson<String>(json['studentId']),
+      latitude: serializer.fromJson<double>(json['latitude']),
+      longitude: serializer.fromJson<double>(json['longitude']),
+      detectedAt: serializer.fromJson<DateTime>(json['detectedAt']),
+      status: serializer.fromJson<String>(json['status']),
+      decidedAt: serializer.fromJson<DateTime?>(json['decidedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'studentId': serializer.toJson<String>(studentId),
+      'latitude': serializer.toJson<double>(latitude),
+      'longitude': serializer.toJson<double>(longitude),
+      'detectedAt': serializer.toJson<DateTime>(detectedAt),
+      'status': serializer.toJson<String>(status),
+      'decidedAt': serializer.toJson<DateTime?>(decidedAt),
+    };
+  }
+
+  ArrivalPrompt copyWith({
+    String? id,
+    String? studentId,
+    double? latitude,
+    double? longitude,
+    DateTime? detectedAt,
+    String? status,
+    Value<DateTime?> decidedAt = const Value.absent(),
+  }) => ArrivalPrompt(
+    id: id ?? this.id,
+    studentId: studentId ?? this.studentId,
+    latitude: latitude ?? this.latitude,
+    longitude: longitude ?? this.longitude,
+    detectedAt: detectedAt ?? this.detectedAt,
+    status: status ?? this.status,
+    decidedAt: decidedAt.present ? decidedAt.value : this.decidedAt,
+  );
+  ArrivalPrompt copyWithCompanion(ArrivalPromptsCompanion data) {
+    return ArrivalPrompt(
+      id: data.id.present ? data.id.value : this.id,
+      studentId: data.studentId.present ? data.studentId.value : this.studentId,
+      latitude: data.latitude.present ? data.latitude.value : this.latitude,
+      longitude: data.longitude.present ? data.longitude.value : this.longitude,
+      detectedAt: data.detectedAt.present
+          ? data.detectedAt.value
+          : this.detectedAt,
+      status: data.status.present ? data.status.value : this.status,
+      decidedAt: data.decidedAt.present ? data.decidedAt.value : this.decidedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ArrivalPrompt(')
+          ..write('id: $id, ')
+          ..write('studentId: $studentId, ')
+          ..write('latitude: $latitude, ')
+          ..write('longitude: $longitude, ')
+          ..write('detectedAt: $detectedAt, ')
+          ..write('status: $status, ')
+          ..write('decidedAt: $decidedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    studentId,
+    latitude,
+    longitude,
+    detectedAt,
+    status,
+    decidedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ArrivalPrompt &&
+          other.id == this.id &&
+          other.studentId == this.studentId &&
+          other.latitude == this.latitude &&
+          other.longitude == this.longitude &&
+          other.detectedAt == this.detectedAt &&
+          other.status == this.status &&
+          other.decidedAt == this.decidedAt);
+}
+
+class ArrivalPromptsCompanion extends UpdateCompanion<ArrivalPrompt> {
+  final Value<String> id;
+  final Value<String> studentId;
+  final Value<double> latitude;
+  final Value<double> longitude;
+  final Value<DateTime> detectedAt;
+  final Value<String> status;
+  final Value<DateTime?> decidedAt;
+  final Value<int> rowid;
+  const ArrivalPromptsCompanion({
+    this.id = const Value.absent(),
+    this.studentId = const Value.absent(),
+    this.latitude = const Value.absent(),
+    this.longitude = const Value.absent(),
+    this.detectedAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.decidedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ArrivalPromptsCompanion.insert({
+    required String id,
+    required String studentId,
+    required double latitude,
+    required double longitude,
+    required DateTime detectedAt,
+    this.status = const Value.absent(),
+    this.decidedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       studentId = Value(studentId),
+       latitude = Value(latitude),
+       longitude = Value(longitude),
+       detectedAt = Value(detectedAt);
+  static Insertable<ArrivalPrompt> custom({
+    Expression<String>? id,
+    Expression<String>? studentId,
+    Expression<double>? latitude,
+    Expression<double>? longitude,
+    Expression<DateTime>? detectedAt,
+    Expression<String>? status,
+    Expression<DateTime>? decidedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (studentId != null) 'student_id': studentId,
+      if (latitude != null) 'latitude': latitude,
+      if (longitude != null) 'longitude': longitude,
+      if (detectedAt != null) 'detected_at': detectedAt,
+      if (status != null) 'status': status,
+      if (decidedAt != null) 'decided_at': decidedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ArrivalPromptsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? studentId,
+    Value<double>? latitude,
+    Value<double>? longitude,
+    Value<DateTime>? detectedAt,
+    Value<String>? status,
+    Value<DateTime?>? decidedAt,
+    Value<int>? rowid,
+  }) {
+    return ArrivalPromptsCompanion(
+      id: id ?? this.id,
+      studentId: studentId ?? this.studentId,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      detectedAt: detectedAt ?? this.detectedAt,
+      status: status ?? this.status,
+      decidedAt: decidedAt ?? this.decidedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (studentId.present) {
+      map['student_id'] = Variable<String>(studentId.value);
+    }
+    if (latitude.present) {
+      map['latitude'] = Variable<double>(latitude.value);
+    }
+    if (longitude.present) {
+      map['longitude'] = Variable<double>(longitude.value);
+    }
+    if (detectedAt.present) {
+      map['detected_at'] = Variable<DateTime>(detectedAt.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (decidedAt.present) {
+      map['decided_at'] = Variable<DateTime>(decidedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ArrivalPromptsCompanion(')
+          ..write('id: $id, ')
+          ..write('studentId: $studentId, ')
+          ..write('latitude: $latitude, ')
+          ..write('longitude: $longitude, ')
+          ..write('detectedAt: $detectedAt, ')
+          ..write('status: $status, ')
+          ..write('decidedAt: $decidedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3730,6 +4942,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $SessionsTable sessions = $SessionsTable(this);
   late final $PaymentsTable payments = $PaymentsTable(this);
   late final $SyncQueueTable syncQueue = $SyncQueueTable(this);
+  late final $LocationLogsTable locationLogs = $LocationLogsTable(this);
+  late final $ArrivalPromptsTable arrivalPrompts = $ArrivalPromptsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3740,6 +4954,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     sessions,
     payments,
     syncQueue,
+    locationLogs,
+    arrivalPrompts,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -3764,6 +4980,27 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       ),
       result: [TableUpdate('payments', kind: UpdateKind.delete)],
     ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'students',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('location_logs', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'sessions',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('location_logs', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'students',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('arrival_prompts', kind: UpdateKind.delete)],
+    ),
   ]);
 }
 
@@ -3780,6 +5017,7 @@ typedef $$StudentsTableCreateCompanionBuilder = StudentsCompanion Function({
   Value<int> paymentRate,
   Value<String> paymentTriggerType,
   Value<int> paymentTriggerValue,
+  Value<int> completedDaysTarget,
   Value<bool> active,
   Value<String?> notes,
   Value<DateTime> createdAt,
@@ -3800,6 +5038,7 @@ typedef $$StudentsTableUpdateCompanionBuilder = StudentsCompanion Function({
   Value<int> paymentRate,
   Value<String> paymentTriggerType,
   Value<int> paymentTriggerValue,
+  Value<int> completedDaysTarget,
   Value<bool> active,
   Value<String?> notes,
   Value<DateTime> createdAt,
@@ -3863,6 +5102,42 @@ final class $$StudentsTableReferences
     ).filter((f) => f.studentId.id.sqlEquals($_itemColumn<String>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_paymentsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$LocationLogsTable, List<LocationLog>>
+  _locationLogsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.locationLogs,
+    aliasName: 'students__id__location_logs__student_id',
+  );
+
+  $$LocationLogsTableProcessedTableManager get locationLogsRefs {
+    final manager = $$LocationLogsTableTableManager(
+      $_db,
+      $_db.locationLogs,
+    ).filter((f) => f.studentId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_locationLogsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$ArrivalPromptsTable, List<ArrivalPrompt>>
+  _arrivalPromptsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.arrivalPrompts,
+    aliasName: 'students__id__arrival_prompts__student_id',
+  );
+
+  $$ArrivalPromptsTableProcessedTableManager get arrivalPromptsRefs {
+    final manager = $$ArrivalPromptsTableTableManager(
+      $_db,
+      $_db.arrivalPrompts,
+    ).filter((f) => f.studentId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_arrivalPromptsRefsTable($_db));
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -3935,6 +5210,11 @@ class $$StudentsTableFilterComposer
 
   ColumnFilters<int> get paymentTriggerValue => $composableBuilder(
     column: $table.paymentTriggerValue,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get completedDaysTarget => $composableBuilder(
+    column: $table.completedDaysTarget,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4037,6 +5317,56 @@ class $$StudentsTableFilterComposer
     );
     return f(composer);
   }
+
+  Expression<bool> locationLogsRefs(
+    Expression<bool> Function($$LocationLogsTableFilterComposer f) f,
+  ) {
+    final $$LocationLogsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.locationLogs,
+      getReferencedColumn: (t) => t.studentId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LocationLogsTableFilterComposer(
+            $db: $db,
+            $table: $db.locationLogs,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> arrivalPromptsRefs(
+    Expression<bool> Function($$ArrivalPromptsTableFilterComposer f) f,
+  ) {
+    final $$ArrivalPromptsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.arrivalPrompts,
+      getReferencedColumn: (t) => t.studentId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ArrivalPromptsTableFilterComposer(
+            $db: $db,
+            $table: $db.arrivalPrompts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$StudentsTableOrderingComposer
@@ -4105,6 +5435,11 @@ class $$StudentsTableOrderingComposer
 
   ColumnOrderings<int> get paymentTriggerValue => $composableBuilder(
     column: $table.paymentTriggerValue,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get completedDaysTarget => $composableBuilder(
+    column: $table.completedDaysTarget,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -4188,6 +5523,11 @@ class $$StudentsTableAnnotationComposer
 
   GeneratedColumn<int> get paymentTriggerValue => $composableBuilder(
     column: $table.paymentTriggerValue,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get completedDaysTarget => $composableBuilder(
+    column: $table.completedDaysTarget,
     builder: (column) => column,
   );
 
@@ -4280,6 +5620,56 @@ class $$StudentsTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> locationLogsRefs<T extends Object>(
+    Expression<T> Function($$LocationLogsTableAnnotationComposer a) f,
+  ) {
+    final $$LocationLogsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.locationLogs,
+      getReferencedColumn: (t) => t.studentId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LocationLogsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.locationLogs,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> arrivalPromptsRefs<T extends Object>(
+    Expression<T> Function($$ArrivalPromptsTableAnnotationComposer a) f,
+  ) {
+    final $$ArrivalPromptsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.arrivalPrompts,
+      getReferencedColumn: (t) => t.studentId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ArrivalPromptsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.arrivalPrompts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$StudentsTableTableManager
@@ -4299,6 +5689,8 @@ class $$StudentsTableTableManager
             bool schedulesRefs,
             bool sessionsRefs,
             bool paymentsRefs,
+            bool locationLogsRefs,
+            bool arrivalPromptsRefs,
           })
         > {
   $$StudentsTableTableManager(_$AppDatabase db, $StudentsTable table)
@@ -4326,6 +5718,7 @@ class $$StudentsTableTableManager
                 Value<int> paymentRate = const Value.absent(),
                 Value<String> paymentTriggerType = const Value.absent(),
                 Value<int> paymentTriggerValue = const Value.absent(),
+                Value<int> completedDaysTarget = const Value.absent(),
                 Value<bool> active = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
@@ -4345,6 +5738,7 @@ class $$StudentsTableTableManager
                 paymentRate: paymentRate,
                 paymentTriggerType: paymentTriggerType,
                 paymentTriggerValue: paymentTriggerValue,
+                completedDaysTarget: completedDaysTarget,
                 active: active,
                 notes: notes,
                 createdAt: createdAt,
@@ -4366,6 +5760,7 @@ class $$StudentsTableTableManager
                 Value<int> paymentRate = const Value.absent(),
                 Value<String> paymentTriggerType = const Value.absent(),
                 Value<int> paymentTriggerValue = const Value.absent(),
+                Value<int> completedDaysTarget = const Value.absent(),
                 Value<bool> active = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
@@ -4385,6 +5780,7 @@ class $$StudentsTableTableManager
                 paymentRate: paymentRate,
                 paymentTriggerType: paymentTriggerType,
                 paymentTriggerValue: paymentTriggerValue,
+                completedDaysTarget: completedDaysTarget,
                 active: active,
                 notes: notes,
                 createdAt: createdAt,
@@ -4405,6 +5801,8 @@ class $$StudentsTableTableManager
                 schedulesRefs = false,
                 sessionsRefs = false,
                 paymentsRefs = false,
+                locationLogsRefs = false,
+                arrivalPromptsRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
@@ -4412,6 +5810,8 @@ class $$StudentsTableTableManager
                     if (schedulesRefs) db.schedules,
                     if (sessionsRefs) db.sessions,
                     if (paymentsRefs) db.payments,
+                    if (locationLogsRefs) db.locationLogs,
+                    if (arrivalPromptsRefs) db.arrivalPrompts,
                   ],
                   addJoins: null,
                   getPrefetchedDataCallback: (items) async {
@@ -4479,6 +5879,48 @@ class $$StudentsTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (locationLogsRefs)
+                        await $_getPrefetchedData<
+                          Student,
+                          $StudentsTable,
+                          LocationLog
+                        >(
+                          currentTable: table,
+                          referencedTable: $$StudentsTableReferences
+                              ._locationLogsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$StudentsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).locationLogsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.studentId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (arrivalPromptsRefs)
+                        await $_getPrefetchedData<
+                          Student,
+                          $StudentsTable,
+                          ArrivalPrompt
+                        >(
+                          currentTable: table,
+                          referencedTable: $$StudentsTableReferences
+                              ._arrivalPromptsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$StudentsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).arrivalPromptsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.studentId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -4503,6 +5945,8 @@ typedef $$StudentsTableProcessedTableManager =
         bool schedulesRefs,
         bool sessionsRefs,
         bool paymentsRefs,
+        bool locationLogsRefs,
+        bool arrivalPromptsRefs,
       })
     >;
 typedef $$SchedulesTableCreateCompanionBuilder = SchedulesCompanion Function({
@@ -4905,6 +6349,9 @@ typedef $$SessionsTableCreateCompanionBuilder = SessionsCompanion Function({
   required int requiredDurationSeconds,
   Value<bool> completed,
   Value<String> source,
+  Value<int> activeSeconds,
+  Value<DateTime?> lastInsideAt,
+  Value<DateTime?> outsideSinceAt,
   Value<double?> startLatitude,
   Value<double?> startLongitude,
   Value<double?> endLatitude,
@@ -4924,6 +6371,9 @@ typedef $$SessionsTableUpdateCompanionBuilder = SessionsCompanion Function({
   Value<int> requiredDurationSeconds,
   Value<bool> completed,
   Value<String> source,
+  Value<int> activeSeconds,
+  Value<DateTime?> lastInsideAt,
+  Value<DateTime?> outsideSinceAt,
   Value<double?> startLatitude,
   Value<double?> startLongitude,
   Value<double?> endLatitude,
@@ -4953,6 +6403,24 @@ final class $$SessionsTableReferences
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<$LocationLogsTable, List<LocationLog>>
+  _locationLogsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.locationLogs,
+    aliasName: 'sessions__id__location_logs__session_id',
+  );
+
+  $$LocationLogsTableProcessedTableManager get locationLogsRefs {
+    final manager = $$LocationLogsTableTableManager(
+      $_db,
+      $_db.locationLogs,
+    ).filter((f) => f.sessionId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_locationLogsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
     );
   }
 }
@@ -4998,6 +6466,21 @@ class $$SessionsTableFilterComposer
 
   ColumnFilters<String> get source => $composableBuilder(
     column: $table.source,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get activeSeconds => $composableBuilder(
+    column: $table.activeSeconds,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastInsideAt => $composableBuilder(
+    column: $table.lastInsideAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get outsideSinceAt => $composableBuilder(
+    column: $table.outsideSinceAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5063,6 +6546,31 @@ class $$SessionsTableFilterComposer
     );
     return composer;
   }
+
+  Expression<bool> locationLogsRefs(
+    Expression<bool> Function($$LocationLogsTableFilterComposer f) f,
+  ) {
+    final $$LocationLogsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.locationLogs,
+      getReferencedColumn: (t) => t.sessionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LocationLogsTableFilterComposer(
+            $db: $db,
+            $table: $db.locationLogs,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$SessionsTableOrderingComposer
@@ -5106,6 +6614,21 @@ class $$SessionsTableOrderingComposer
 
   ColumnOrderings<String> get source => $composableBuilder(
     column: $table.source,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get activeSeconds => $composableBuilder(
+    column: $table.activeSeconds,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastInsideAt => $composableBuilder(
+    column: $table.lastInsideAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get outsideSinceAt => $composableBuilder(
+    column: $table.outsideSinceAt,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -5207,6 +6730,21 @@ class $$SessionsTableAnnotationComposer
   GeneratedColumn<String> get source =>
       $composableBuilder(column: $table.source, builder: (column) => column);
 
+  GeneratedColumn<int> get activeSeconds => $composableBuilder(
+    column: $table.activeSeconds,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get lastInsideAt => $composableBuilder(
+    column: $table.lastInsideAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get outsideSinceAt => $composableBuilder(
+    column: $table.outsideSinceAt,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<double> get startLatitude => $composableBuilder(
     column: $table.startLatitude,
     builder: (column) => column,
@@ -5261,6 +6799,31 @@ class $$SessionsTableAnnotationComposer
     );
     return composer;
   }
+
+  Expression<T> locationLogsRefs<T extends Object>(
+    Expression<T> Function($$LocationLogsTableAnnotationComposer a) f,
+  ) {
+    final $$LocationLogsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.locationLogs,
+      getReferencedColumn: (t) => t.sessionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LocationLogsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.locationLogs,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$SessionsTableTableManager
@@ -5276,7 +6839,7 @@ class $$SessionsTableTableManager
           $$SessionsTableUpdateCompanionBuilder,
           (Session, $$SessionsTableReferences),
           Session,
-          PrefetchHooks Function({bool studentId})
+          PrefetchHooks Function({bool studentId, bool locationLogsRefs})
         > {
   $$SessionsTableTableManager(_$AppDatabase db, $SessionsTable table)
     : super(
@@ -5299,6 +6862,9 @@ class $$SessionsTableTableManager
                 Value<int> requiredDurationSeconds = const Value.absent(),
                 Value<bool> completed = const Value.absent(),
                 Value<String> source = const Value.absent(),
+                Value<int> activeSeconds = const Value.absent(),
+                Value<DateTime?> lastInsideAt = const Value.absent(),
+                Value<DateTime?> outsideSinceAt = const Value.absent(),
                 Value<double?> startLatitude = const Value.absent(),
                 Value<double?> startLongitude = const Value.absent(),
                 Value<double?> endLatitude = const Value.absent(),
@@ -5317,6 +6883,9 @@ class $$SessionsTableTableManager
                 requiredDurationSeconds: requiredDurationSeconds,
                 completed: completed,
                 source: source,
+                activeSeconds: activeSeconds,
+                lastInsideAt: lastInsideAt,
+                outsideSinceAt: outsideSinceAt,
                 startLatitude: startLatitude,
                 startLongitude: startLongitude,
                 endLatitude: endLatitude,
@@ -5337,6 +6906,9 @@ class $$SessionsTableTableManager
                 required int requiredDurationSeconds,
                 Value<bool> completed = const Value.absent(),
                 Value<String> source = const Value.absent(),
+                Value<int> activeSeconds = const Value.absent(),
+                Value<DateTime?> lastInsideAt = const Value.absent(),
+                Value<DateTime?> outsideSinceAt = const Value.absent(),
                 Value<double?> startLatitude = const Value.absent(),
                 Value<double?> startLongitude = const Value.absent(),
                 Value<double?> endLatitude = const Value.absent(),
@@ -5355,6 +6927,9 @@ class $$SessionsTableTableManager
                 requiredDurationSeconds: requiredDurationSeconds,
                 completed: completed,
                 source: source,
+                activeSeconds: activeSeconds,
+                lastInsideAt: lastInsideAt,
+                outsideSinceAt: outsideSinceAt,
                 startLatitude: startLatitude,
                 startLongitude: startLongitude,
                 endLatitude: endLatitude,
@@ -5373,45 +6948,70 @@ class $$SessionsTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({studentId = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (studentId) {
-                      state = state.withJoin(
-                        currentTable: table,
-                        currentColumn: table.studentId,
-                        referencedTable: $$SessionsTableReferences
-                            ._studentIdTable(db),
-                        referencedColumn: $$SessionsTableReferences
-                            ._studentIdTable(db)
-                            .id,
-                      ) as T;
-                    }
+          prefetchHooksCallback:
+              ({studentId = false, locationLogsRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (locationLogsRefs) db.locationLogs,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (studentId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.studentId,
+                            referencedTable: $$SessionsTableReferences
+                                ._studentIdTable(db),
+                            referencedColumn: $$SessionsTableReferences
+                                ._studentIdTable(db)
+                                .id,
+                          ) as T;
+                        }
 
-                    return state;
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (locationLogsRefs)
+                        await $_getPrefetchedData<
+                          Session,
+                          $SessionsTable,
+                          LocationLog
+                        >(
+                          currentTable: table,
+                          referencedTable: $$SessionsTableReferences
+                              ._locationLogsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$SessionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).locationLogsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.sessionId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
                   },
-              getPrefetchedDataCallback: (items) async {
-                return [];
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -5428,7 +7028,7 @@ typedef $$SessionsTableProcessedTableManager =
       $$SessionsTableUpdateCompanionBuilder,
       (Session, $$SessionsTableReferences),
       Session,
-      PrefetchHooks Function({bool studentId})
+      PrefetchHooks Function({bool studentId, bool locationLogsRefs})
     >;
 typedef $$PaymentsTableCreateCompanionBuilder = PaymentsCompanion Function({
   required String id,
@@ -6150,6 +7750,829 @@ typedef $$SyncQueueTableProcessedTableManager =
       SyncQueueData,
       PrefetchHooks Function()
     >;
+typedef $$LocationLogsTableCreateCompanionBuilder =
+    LocationLogsCompanion Function({
+      required String id,
+      required String studentId,
+      Value<String?> sessionId,
+      required double latitude,
+      required double longitude,
+      required double accuracyMeters,
+      required double distanceMeters,
+      required DateTime recordedAt,
+      Value<int> rowid,
+    });
+typedef $$LocationLogsTableUpdateCompanionBuilder =
+    LocationLogsCompanion Function({
+      Value<String> id,
+      Value<String> studentId,
+      Value<String?> sessionId,
+      Value<double> latitude,
+      Value<double> longitude,
+      Value<double> accuracyMeters,
+      Value<double> distanceMeters,
+      Value<DateTime> recordedAt,
+      Value<int> rowid,
+    });
+
+final class $$LocationLogsTableReferences
+    extends BaseReferences<_$AppDatabase, $LocationLogsTable, LocationLog> {
+  $$LocationLogsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $StudentsTable _studentIdTable(_$AppDatabase db) =>
+      db.students.createAlias('location_logs__student_id__students__id');
+
+  $$StudentsTableProcessedTableManager get studentId {
+    final $_column = $_itemColumn<String>('student_id')!;
+
+    final manager = $$StudentsTableTableManager(
+      $_db,
+      $_db.students,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_studentIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $SessionsTable _sessionIdTable(_$AppDatabase db) =>
+      db.sessions.createAlias('location_logs__session_id__sessions__id');
+
+  $$SessionsTableProcessedTableManager? get sessionId {
+    final $_column = $_itemColumn<String>('session_id');
+    if ($_column == null) return null;
+    final manager = $$SessionsTableTableManager(
+      $_db,
+      $_db.sessions,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_sessionIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$LocationLogsTableFilterComposer
+    extends Composer<_$AppDatabase, $LocationLogsTable> {
+  $$LocationLogsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get latitude => $composableBuilder(
+    column: $table.latitude,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get longitude => $composableBuilder(
+    column: $table.longitude,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get accuracyMeters => $composableBuilder(
+    column: $table.accuracyMeters,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get distanceMeters => $composableBuilder(
+    column: $table.distanceMeters,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get recordedAt => $composableBuilder(
+    column: $table.recordedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$StudentsTableFilterComposer get studentId {
+    final $$StudentsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.studentId,
+      referencedTable: $db.students,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$StudentsTableFilterComposer(
+            $db: $db,
+            $table: $db.students,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$SessionsTableFilterComposer get sessionId {
+    final $$SessionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.sessionId,
+      referencedTable: $db.sessions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SessionsTableFilterComposer(
+            $db: $db,
+            $table: $db.sessions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$LocationLogsTableOrderingComposer
+    extends Composer<_$AppDatabase, $LocationLogsTable> {
+  $$LocationLogsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get latitude => $composableBuilder(
+    column: $table.latitude,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get longitude => $composableBuilder(
+    column: $table.longitude,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get accuracyMeters => $composableBuilder(
+    column: $table.accuracyMeters,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get distanceMeters => $composableBuilder(
+    column: $table.distanceMeters,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get recordedAt => $composableBuilder(
+    column: $table.recordedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$StudentsTableOrderingComposer get studentId {
+    final $$StudentsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.studentId,
+      referencedTable: $db.students,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$StudentsTableOrderingComposer(
+            $db: $db,
+            $table: $db.students,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$SessionsTableOrderingComposer get sessionId {
+    final $$SessionsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.sessionId,
+      referencedTable: $db.sessions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SessionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.sessions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$LocationLogsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LocationLogsTable> {
+  $$LocationLogsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<double> get latitude =>
+      $composableBuilder(column: $table.latitude, builder: (column) => column);
+
+  GeneratedColumn<double> get longitude =>
+      $composableBuilder(column: $table.longitude, builder: (column) => column);
+
+  GeneratedColumn<double> get accuracyMeters => $composableBuilder(
+    column: $table.accuracyMeters,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get distanceMeters => $composableBuilder(
+    column: $table.distanceMeters,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get recordedAt => $composableBuilder(
+    column: $table.recordedAt,
+    builder: (column) => column,
+  );
+
+  $$StudentsTableAnnotationComposer get studentId {
+    final $$StudentsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.studentId,
+      referencedTable: $db.students,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$StudentsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.students,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$SessionsTableAnnotationComposer get sessionId {
+    final $$SessionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.sessionId,
+      referencedTable: $db.sessions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SessionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.sessions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$LocationLogsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LocationLogsTable,
+          LocationLog,
+          $$LocationLogsTableFilterComposer,
+          $$LocationLogsTableOrderingComposer,
+          $$LocationLogsTableAnnotationComposer,
+          $$LocationLogsTableCreateCompanionBuilder,
+          $$LocationLogsTableUpdateCompanionBuilder,
+          (LocationLog, $$LocationLogsTableReferences),
+          LocationLog,
+          PrefetchHooks Function({bool studentId, bool sessionId})
+        > {
+  $$LocationLogsTableTableManager(_$AppDatabase db, $LocationLogsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LocationLogsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LocationLogsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LocationLogsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> studentId = const Value.absent(),
+                Value<String?> sessionId = const Value.absent(),
+                Value<double> latitude = const Value.absent(),
+                Value<double> longitude = const Value.absent(),
+                Value<double> accuracyMeters = const Value.absent(),
+                Value<double> distanceMeters = const Value.absent(),
+                Value<DateTime> recordedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LocationLogsCompanion(
+                id: id,
+                studentId: studentId,
+                sessionId: sessionId,
+                latitude: latitude,
+                longitude: longitude,
+                accuracyMeters: accuracyMeters,
+                distanceMeters: distanceMeters,
+                recordedAt: recordedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String studentId,
+                Value<String?> sessionId = const Value.absent(),
+                required double latitude,
+                required double longitude,
+                required double accuracyMeters,
+                required double distanceMeters,
+                required DateTime recordedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => LocationLogsCompanion.insert(
+                id: id,
+                studentId: studentId,
+                sessionId: sessionId,
+                latitude: latitude,
+                longitude: longitude,
+                accuracyMeters: accuracyMeters,
+                distanceMeters: distanceMeters,
+                recordedAt: recordedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$LocationLogsTable, LocationLog>(table),
+                  $$LocationLogsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({studentId = false, sessionId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (studentId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.studentId,
+                        referencedTable: $$LocationLogsTableReferences
+                            ._studentIdTable(db),
+                        referencedColumn: $$LocationLogsTableReferences
+                            ._studentIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+                    if (sessionId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.sessionId,
+                        referencedTable: $$LocationLogsTableReferences
+                            ._sessionIdTable(db),
+                        referencedColumn: $$LocationLogsTableReferences
+                            ._sessionIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$LocationLogsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LocationLogsTable,
+      LocationLog,
+      $$LocationLogsTableFilterComposer,
+      $$LocationLogsTableOrderingComposer,
+      $$LocationLogsTableAnnotationComposer,
+      $$LocationLogsTableCreateCompanionBuilder,
+      $$LocationLogsTableUpdateCompanionBuilder,
+      (LocationLog, $$LocationLogsTableReferences),
+      LocationLog,
+      PrefetchHooks Function({bool studentId, bool sessionId})
+    >;
+typedef $$ArrivalPromptsTableCreateCompanionBuilder =
+    ArrivalPromptsCompanion Function({
+      required String id,
+      required String studentId,
+      required double latitude,
+      required double longitude,
+      required DateTime detectedAt,
+      Value<String> status,
+      Value<DateTime?> decidedAt,
+      Value<int> rowid,
+    });
+typedef $$ArrivalPromptsTableUpdateCompanionBuilder =
+    ArrivalPromptsCompanion Function({
+      Value<String> id,
+      Value<String> studentId,
+      Value<double> latitude,
+      Value<double> longitude,
+      Value<DateTime> detectedAt,
+      Value<String> status,
+      Value<DateTime?> decidedAt,
+      Value<int> rowid,
+    });
+
+final class $$ArrivalPromptsTableReferences
+    extends BaseReferences<_$AppDatabase, $ArrivalPromptsTable, ArrivalPrompt> {
+  $$ArrivalPromptsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $StudentsTable _studentIdTable(_$AppDatabase db) =>
+      db.students.createAlias('arrival_prompts__student_id__students__id');
+
+  $$StudentsTableProcessedTableManager get studentId {
+    final $_column = $_itemColumn<String>('student_id')!;
+
+    final manager = $$StudentsTableTableManager(
+      $_db,
+      $_db.students,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_studentIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$ArrivalPromptsTableFilterComposer
+    extends Composer<_$AppDatabase, $ArrivalPromptsTable> {
+  $$ArrivalPromptsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get latitude => $composableBuilder(
+    column: $table.latitude,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get longitude => $composableBuilder(
+    column: $table.longitude,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get detectedAt => $composableBuilder(
+    column: $table.detectedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get decidedAt => $composableBuilder(
+    column: $table.decidedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$StudentsTableFilterComposer get studentId {
+    final $$StudentsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.studentId,
+      referencedTable: $db.students,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$StudentsTableFilterComposer(
+            $db: $db,
+            $table: $db.students,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ArrivalPromptsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ArrivalPromptsTable> {
+  $$ArrivalPromptsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get latitude => $composableBuilder(
+    column: $table.latitude,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get longitude => $composableBuilder(
+    column: $table.longitude,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get detectedAt => $composableBuilder(
+    column: $table.detectedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get decidedAt => $composableBuilder(
+    column: $table.decidedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$StudentsTableOrderingComposer get studentId {
+    final $$StudentsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.studentId,
+      referencedTable: $db.students,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$StudentsTableOrderingComposer(
+            $db: $db,
+            $table: $db.students,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ArrivalPromptsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ArrivalPromptsTable> {
+  $$ArrivalPromptsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<double> get latitude =>
+      $composableBuilder(column: $table.latitude, builder: (column) => column);
+
+  GeneratedColumn<double> get longitude =>
+      $composableBuilder(column: $table.longitude, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get detectedAt => $composableBuilder(
+    column: $table.detectedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get decidedAt =>
+      $composableBuilder(column: $table.decidedAt, builder: (column) => column);
+
+  $$StudentsTableAnnotationComposer get studentId {
+    final $$StudentsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.studentId,
+      referencedTable: $db.students,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$StudentsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.students,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ArrivalPromptsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ArrivalPromptsTable,
+          ArrivalPrompt,
+          $$ArrivalPromptsTableFilterComposer,
+          $$ArrivalPromptsTableOrderingComposer,
+          $$ArrivalPromptsTableAnnotationComposer,
+          $$ArrivalPromptsTableCreateCompanionBuilder,
+          $$ArrivalPromptsTableUpdateCompanionBuilder,
+          (ArrivalPrompt, $$ArrivalPromptsTableReferences),
+          ArrivalPrompt,
+          PrefetchHooks Function({bool studentId})
+        > {
+  $$ArrivalPromptsTableTableManager(
+    _$AppDatabase db,
+    $ArrivalPromptsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ArrivalPromptsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ArrivalPromptsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ArrivalPromptsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> studentId = const Value.absent(),
+                Value<double> latitude = const Value.absent(),
+                Value<double> longitude = const Value.absent(),
+                Value<DateTime> detectedAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<DateTime?> decidedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ArrivalPromptsCompanion(
+                id: id,
+                studentId: studentId,
+                latitude: latitude,
+                longitude: longitude,
+                detectedAt: detectedAt,
+                status: status,
+                decidedAt: decidedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String studentId,
+                required double latitude,
+                required double longitude,
+                required DateTime detectedAt,
+                Value<String> status = const Value.absent(),
+                Value<DateTime?> decidedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ArrivalPromptsCompanion.insert(
+                id: id,
+                studentId: studentId,
+                latitude: latitude,
+                longitude: longitude,
+                detectedAt: detectedAt,
+                status: status,
+                decidedAt: decidedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ArrivalPromptsTable, ArrivalPrompt>(table),
+                  $$ArrivalPromptsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({studentId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (studentId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.studentId,
+                        referencedTable: $$ArrivalPromptsTableReferences
+                            ._studentIdTable(db),
+                        referencedColumn: $$ArrivalPromptsTableReferences
+                            ._studentIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$ArrivalPromptsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ArrivalPromptsTable,
+      ArrivalPrompt,
+      $$ArrivalPromptsTableFilterComposer,
+      $$ArrivalPromptsTableOrderingComposer,
+      $$ArrivalPromptsTableAnnotationComposer,
+      $$ArrivalPromptsTableCreateCompanionBuilder,
+      $$ArrivalPromptsTableUpdateCompanionBuilder,
+      (ArrivalPrompt, $$ArrivalPromptsTableReferences),
+      ArrivalPrompt,
+      PrefetchHooks Function({bool studentId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -6164,4 +8587,8 @@ class $AppDatabaseManager {
       $$PaymentsTableTableManager(_db, _db.payments);
   $$SyncQueueTableTableManager get syncQueue =>
       $$SyncQueueTableTableManager(_db, _db.syncQueue);
+  $$LocationLogsTableTableManager get locationLogs =>
+      $$LocationLogsTableTableManager(_db, _db.locationLogs);
+  $$ArrivalPromptsTableTableManager get arrivalPrompts =>
+      $$ArrivalPromptsTableTableManager(_db, _db.arrivalPrompts);
 }

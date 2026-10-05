@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/app_localizations.dart';
 import 'student_providers.dart';
+import 'tuition_location_editor_screen.dart';
+import 'weekly_schedule_editor_screen.dart';
 
 class StudentListScreen extends ConsumerWidget {
   const StudentListScreen({super.key});
@@ -67,11 +69,38 @@ class StudentListScreen extends ConsumerWidget {
                 trailing: PopupMenuButton<String>(
                   tooltip: strings.archiveStudent,
                   onSelected: (value) {
-                    if (value == 'archive') {
-                      _archiveStudent(context, ref, student.id, student.name);
+                    switch (value) {
+                      case 'location':
+                        _openEditor(
+                          context,
+                          TuitionLocationEditorScreen(student: student),
+                        );
+                        break;
+                      case 'schedule':
+                        _openEditor(
+                          context,
+                          WeeklyScheduleEditorScreen(student: student),
+                        );
+                        break;
+                      case 'archive':
+                        _archiveStudent(
+                          context,
+                          ref,
+                          student.id,
+                          student.name,
+                        );
+                        break;
                     }
                   },
                   itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 'location',
+                      child: Text(strings.editTuitionLocation),
+                    ),
+                    PopupMenuItem(
+                      value: 'schedule',
+                      child: Text(strings.editWeeklySchedule),
+                    ),
                     PopupMenuItem(
                       value: 'archive',
                       child: Text(strings.archiveStudent),
@@ -86,6 +115,21 @@ class StudentListScreen extends ConsumerWidget {
       error: (error, stackTrace) => Center(child: Text(strings.unknownError)),
       loading: () => const Center(child: CircularProgressIndicator()),
     );
+  }
+
+  Future<void> _openEditor(BuildContext context, Widget screen) async {
+    final saved = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (context) => screen),
+    );
+    if (saved == true && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.settingsSaved,
+          ),
+        ),
+      );
+    }
   }
 
   Future<void> _archiveStudent(
